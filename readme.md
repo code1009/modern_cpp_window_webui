@@ -1,6 +1,6 @@
 # modern_cpp_window_webui
 
-[<img src="screenshot.png">](https://github.com/code1009/modern_cpp_window_webui/raw/master/screenshot.png)
+[<img src="https://github.com/code1009/modern_cpp_window_webui/screenshot.png">](https://github.com/code1009/modern_cpp_window_webui/screenshot.png)
 
 Microsoft Edge WebView2 control을 이용해서 webui를 winapi환경에서 구현.  
 
