@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="res">
+      <UniqueIdentifier>{fa46a926-00b2-435b-a26b-8680ddc4b15a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="wui">
+      <UniqueIdentifier>{f2948d75-10ad-4678-b531-06a810d558c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="app">
+      <UniqueIdentifier>{ed3b4dde-f423-4e58-a953-c10aa39f84ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\web">
+      <UniqueIdentifier>{2e5aa86f-ad03-4474-94b7-f58ce7e147dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{dc3911c2-e2f9-429f-b785-044831e8d3df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vcpkg">
+      <UniqueIdentifier>{034ac7a7-325a-456d-a52f-9111da0d7da3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="doc">
+      <UniqueIdentifier>{16486b17-e945-48f0-a906-1ce7abee8094}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\app.aps">
+      <Filter>res</Filter>
+    </None>
+    <None Include="res\web\basic.css">
+      <Filter>res\web</Filter>
+    </None>
+    <None Include="res\web\basic.js">
+      <Filter>res\web</Filter>
+    </None>
+    <None Include="res\web\index.html">
+      <Filter>res\web</Filter>
+    </None>
+    <None Include="vcpkg.json">
+      <Filter>vcpkg</Filter>
+    </None>
+    <None Include="..\doc\build.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="..\readme.md">
+      <Filter>doc</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\app.ico">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="res\small.ico">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\screenshot.png">
+      <Filter>doc</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\app.rc">
+      <Filter>res</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="res\PerMonitorV2.manifest">
+      <Filter>res</Filter>
+    </Manifest>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="res\Resource.h">
+      <Filter>res</Filter>
+    </ClInclude>
+    <ClInclude Include="wui\Core.hpp">
+      <Filter>wui</Filter>
+    </ClInclude>
+    <ClInclude Include="wui\WindowFunction.hpp">
+      <Filter>wui</Filter>
+    </ClInclude>
+    <ClInclude Include="wui\WindowMessageManipulator.hpp">
+      <Filter>wui</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.hpp">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="app\AboutDialog.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\MainFrame.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\pch.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\ResourceWebContents.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\WebView.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="wui\Core.cpp">
+      <Filter>wui</Filter>
+    </ClCompile>
+    <ClCompile Include="wui\WindowFunction.cpp">
+      <Filter>wui</Filter>
+    </ClCompile>
+    <ClCompile Include="wui\WindowMessageManipulator.cpp">
+      <Filter>wui</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="app\main.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\MainFrame.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\ResourceWebContents.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\WebView.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

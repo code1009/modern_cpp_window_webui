@@ -1,0 +1,13 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "my-app",
+  "version": "0.0.1",
+  "dependencies": [
+    "fmt",
+    "pugixml",
+    "nlohmann-json",
+    "cpprestsdk",
+    "wil",
+    "webview2"
+  ]
+}

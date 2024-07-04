@@ -1,0 +1,1027 @@
+﻿/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+#include "pch.hpp"
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+using namespace Microsoft::WRL;
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+namespace app
+{
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+WebView::WebView(HWND hParent)
+{
+	//-----------------------------------------------------------------------
+	registerWindowMessageHandler();
+
+
+	//-----------------------------------------------------------------------
+	initializeWindowClass();
+	registerWindowClass();
+
+
+	//-----------------------------------------------------------------------
+	DWORD style = WS_CHILD | WS_VISIBLE; // | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+	DWORD styleEx = 0; // WS_EX_CLIENTEDGE;
+	std::wstring windowText;
+	RECT rect;
+
+
+	windowText = L"WebView";
+	GetClientRect(hParent, &rect);
+
+
+	//-----------------------------------------------------------------------
+	HWND hwnd;
+
+
+	hwnd = createWindow(
+		hParent,
+		rect,
+		windowText.c_str(),
+		static_cast<DWORD>(style),
+		static_cast<DWORD>(styleEx)
+		//rect.left, rect.top, rect.right, rect.bottom
+	);
+	if (!hwnd)
+	{
+		throw std::wstring(L"WebView::WebView(): createWindow() failed");
+	}
+
+
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"createWebView-begin");
+	createWebView();
+	WUI_TRACE(L"createWebView-end");
+
+
+	//-----------------------------------------------------------------------
+	::ShowWindow(getHandle(), SW_SHOW);
+	::UpdateWindow(getHandle());
+
+
+	//-----------------------------------------------------------------------
+	/*
+	std::wstring text;
+
+
+	text = getWindowText(this);
+	text = L"WebView";
+	setWindowText(this, text);
+	text = getWindowText(this);
+	wui::debugPrintln(text);
+	*/
+}
+
+WebView::~WebView()
+{
+}
+
+void WebView::registerWindowMessageHandler(void)
+{
+	getWindowMessageHandler(WM_CREATE) = [this](wui::WindowMessage& windowMessage) { onCreate(windowMessage); };
+	getWindowMessageHandler(WM_DESTROY) = [this](wui::WindowMessage& windowMessage) { onDestory(windowMessage); };
+	getWindowMessageHandler(WM_CLOSE) = [this](wui::WindowMessage& windowMessage) { onClose(windowMessage); };
+	getWindowMessageHandler(WM_SIZE) = [this](wui::WindowMessage& windowMessage) { onSize(windowMessage); };
+	getWindowMessageHandler(WM_DPICHANGED) = [this](wui::WindowMessage& windowMessage) { onDPIChanged(windowMessage); };
+	getWindowMessageHandler(WM_COMMAND) = [this](wui::WindowMessage& windowMessage) { onCommand(windowMessage); };
+}
+
+void WebView::onCreate(wui::WindowMessage& windowMessage)
+{
+	//-----------------------------------------------------------------------
+	//SetWindowTextW(windowMessage.hWnd, L"WebView");
+
+
+	defaultWindowMessageHandler(windowMessage);
+}
+
+void WebView::onDestory(wui::WindowMessage& windowMessage)
+{
+	WUI_TRACE(L"destroyWebView-begin");
+	destroyWebView();
+	WUI_TRACE(L"destroyWebView-end");
+}
+
+void WebView::onClose(wui::WindowMessage& windowMessage)
+{
+}
+
+void WebView::onSize(wui::WindowMessage& windowMessage)
+{
+	//-----------------------------------------------------------------------
+	wui::WM_SIZE_WindowMessageManipulator windowMessageManipulator(&windowMessage);
+
+
+	//-----------------------------------------------------------------------
+	RECT rect;
+
+
+	if (_ContentsWebViewController != nullptr)
+	{
+		::GetClientRect(getHandle(), &rect);
+
+		_ContentsWebViewController->put_Bounds(rect);
+	}
+}
+
+void WebView::onDPIChanged(wui::WindowMessage& windowMessage)
+{
+	RECT* pWindowRect = reinterpret_cast<RECT*>(windowMessage.lParam);
+
+
+	wui::setWindowPos(this, HWND_TOP, *pWindowRect, SWP_SHOWWINDOW);
+}
+
+void WebView::onCommand(wui::WindowMessage& windowMessage)
+{
+	wui::WM_COMMAND_WindowMessageManipulator windowMessageManipulator(&windowMessage);
+
+/*
+	switch (windowMessageManipulator.nID())
+	{
+	case IDM_TEST1:
+		onTest1(windowMessage);
+		return;
+		break;
+
+	case IDM_TEST2:
+		onTest2(windowMessage);
+		return;
+		break;
+
+	default:
+		break;
+	}
+*/
+
+	defaultWindowMessageHandler(windowMessage);
+}
+
+void WebView::onTest1(wui::WindowMessage& windowMessage)
+{
+	ContentsWebView_postWebMessageAsJson();
+}
+
+void WebView::onTest2(wui::WindowMessage& windowMessage)
+{
+}
+
+//===========================================================================
+int WebView::getDPIAwareBound(int bound)
+{
+	constexpr int DEFAULT_DPI = 96;
+
+	return (bound * GetDpiForWindow(getHandle()) / DEFAULT_DPI);
+}
+
+//===========================================================================
+std::wstring WebView::getContentsDataFolder(void)
+{
+	WCHAR path[MAX_PATH];
+
+
+	std::wstring dataDirectory;
+	HRESULT hr;
+	
+	
+	// L"C:\\Users\\USER\\AppData\\Roaming";
+	hr = SHGetFolderPathW(nullptr, CSIDL_APPDATA, NULL, 0, path);
+	if (SUCCEEDED(hr))
+	{
+		dataDirectory = std::wstring(path);
+
+		dataDirectory.append(L"\\wui\\");
+	}
+	else
+	{
+		dataDirectory = std::wstring(L".\\");
+	}
+
+	dataDirectory.append(L"app");
+	dataDirectory.append(L"\\data");
+	
+
+	return dataDirectory;
+}
+
+std::wstring WebView::getContentsHost(void)
+{
+	std::wstring host = L"https://www.code1009.com";
+
+
+	return host;
+}
+
+std::wstring WebView::getContentsURN(std::wstring uri)
+{
+	std::wstring host = getContentsHost();
+	std::wstring urn;
+
+
+	if (0 == uri.compare(0, host.size(), host))
+	{
+		urn = uri.substr(host.size());
+	}
+
+	return urn;
+}
+
+//===========================================================================
+void WebView::createWebView(void)
+{	
+	//-----------------------------------------------------------------------
+	registerResourceWebContentsMap();
+
+
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	hr = CreateCoreWebView2EnvironmentWithOptions(
+		nullptr, 
+		getContentsDataFolder().c_str(),
+		nullptr,
+		Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
+			[this](HRESULT hresult, ICoreWebView2Environment* env) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				RETURN_IF_FAILED(hresult);
+
+
+				//-----------------------------------------------------------------------
+				_ContentsWebViewEnvironment = env;
+
+
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				hr = createContentsWebViewController();
+
+				return hr;
+			}
+		).Get()
+	);
+}
+
+void WebView::destroyWebView(void)
+{
+	//_ContentsWebViewController->Release();
+	_ContentsWebViewEnvironment->Release();
+}
+
+void WebView::registerResourceWebContentsMap(void)
+{
+	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+	_ResourceWebContentsMap.registerResourceWebContents(L"/index.html", L"Content-Type: text/html", L"index.html");
+	_ResourceWebContentsMap.registerResourceWebContents(L"/basic.js", L"Content-Type: text/javascript", L"basic.js");
+	_ResourceWebContentsMap.registerResourceWebContents(L"/basic.css", L"Content-Type: text/css", L"basic.css");
+	//_ResourceWebContentsMap.registerResourceWebContents(L"/favicon.ico", L"Content-Type: image/x-icon", L"favicon.ico");
+}
+
+HRESULT WebView::createContentsWebViewController(void)
+{
+	HRESULT hr;
+
+
+	hr = _ContentsWebViewEnvironment->CreateCoreWebView2Controller(
+		getHandle(),
+		Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
+			[this](HRESULT hresult, ICoreWebView2Controller* controller) -> HRESULT
+			{
+				RETURN_IF_FAILED(hresult);
+
+
+				if (controller != nullptr)
+				{
+					//-----------------------------------------------------------------------
+					_ContentsWebViewController = controller;
+					
+
+					//-----------------------------------------------------------------------
+					HRESULT hr;
+
+
+					//-----------------------------------------------------------------------
+					hr = setupContentsWebViewController();
+					RETURN_IF_FAILED(hr);
+
+
+					//-----------------------------------------------------------------------
+					hr = _ContentsWebViewController->get_CoreWebView2(&_ContentsWebView);
+					RETURN_IF_FAILED(hr);
+
+
+					//-----------------------------------------------------------------------
+					hr = setupContentsWebViewSettings();
+					RETURN_IF_FAILED(hr);
+
+
+					//-----------------------------------------------------------------------
+					hr = setupContentsWebView();
+					RETURN_IF_FAILED(hr);
+
+
+					//-----------------------------------------------------------------------
+					hr = resizeContentsWebViewController();
+					RETURN_IF_FAILED(hr);
+				}
+
+				return S_OK;
+			}
+		).Get()
+	);
+
+	return hr;
+}
+
+HRESULT WebView::setupContentsWebViewController(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	/*
+	hr = resizeContentsWebViewController();
+	RETURN_IF_FAILED(hr);
+	*/
+
+
+	//-----------------------------------------------------------------------
+	wil::com_ptr<ICoreWebView2Controller4> controller4 = 
+		_ContentsWebViewController.try_query<ICoreWebView2Controller4>();
+
+
+	if (controller4)
+	{
+		hr = controller4->put_AllowExternalDrop(FALSE);
+		RETURN_IF_FAILED(hr);
+	}
+
+
+	return S_OK;
+}
+
+HRESULT WebView::resizeContentsWebViewController(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	RECT rect;
+
+
+	::GetClientRect(getHandle(), &rect);
+
+
+	hr = _ContentsWebViewController->put_Bounds(rect);
+	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::setupContentsWebView(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	hr = ContentsWebView_setupWebResourceRequestedFilter();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupWebMessageReceived();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_registerEventHandler();
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	std::wstring uri;
+
+
+	uri = getContentsHost() + L"/index.html";
+	hr = _ContentsWebView->Navigate(uri.c_str());
+	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::setupContentsWebViewSettings(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	wil::com_ptr<ICoreWebView2Settings>  _ContentsWebViewSettings;
+	wil::com_ptr<ICoreWebView2Settings2> _ContentsWebViewSettings2;
+	wil::com_ptr<ICoreWebView2Settings3> _ContentsWebViewSettings3;
+	wil::com_ptr<ICoreWebView2Settings4> _ContentsWebViewSettings4;
+	wil::com_ptr<ICoreWebView2Settings5> _ContentsWebViewSettings5;
+	wil::com_ptr<ICoreWebView2Settings6> _ContentsWebViewSettings6;
+	wil::com_ptr<ICoreWebView2Settings7> _ContentsWebViewSettings7;
+	wil::com_ptr<ICoreWebView2Settings8> _ContentsWebViewSettings8;
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->get_Settings(&_ContentsWebViewSettings);
+	RETURN_IF_FAILED(hr);
+
+	_ContentsWebViewSettings2 = _ContentsWebViewSettings.try_query<ICoreWebView2Settings2>();
+	_ContentsWebViewSettings3 = _ContentsWebViewSettings.try_query<ICoreWebView2Settings3>();
+	_ContentsWebViewSettings4 = _ContentsWebViewSettings.try_query<ICoreWebView2Settings4>();
+	_ContentsWebViewSettings5 = _ContentsWebViewSettings.try_query<ICoreWebView2Settings5>();
+	_ContentsWebViewSettings6 = _ContentsWebViewSettings.try_query<ICoreWebView2Settings6>();
+	_ContentsWebViewSettings7 = _ContentsWebViewSettings.try_query<ICoreWebView2Settings7>();
+	_ContentsWebViewSettings8 = _ContentsWebViewSettings.try_query<ICoreWebView2Settings8>();
+
+
+	//-----------------------------------------------------------------------
+	if (_ContentsWebViewSettings2)
+	{
+		_ContentsWebViewSettings2->put_IsZoomControlEnabled(FALSE);
+		_ContentsWebViewSettings2->put_AreDefaultContextMenusEnabled(FALSE);
+	}
+
+	if (_ContentsWebViewSettings3)
+	{
+		_ContentsWebViewSettings3->put_AreBrowserAcceleratorKeysEnabled(FALSE);
+	}
+
+
+	//-----------------------------------------------------------------------
+#if 0
+	std::wstring script;
+
+
+	script = L"window.addEventListener(\"contextmenu\", window => {window.preventDefault();});";
+	hr = _ContentsWebView->AddScriptToExecuteOnDocumentCreated(script.c_str(), nullptr);
+	RETURN_IF_FAILED(hr);
+#endif
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupWebResourceRequestedFilter(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	std::wstring uri;
+
+
+	uri = getContentsHost() + L"/*";
+	hr = _ContentsWebView->AddWebResourceRequestedFilter(uri.c_str(), COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->add_WebResourceRequested(
+		Callback<ICoreWebView2WebResourceRequestedEventHandler>(
+			[this](ICoreWebView2* sender, ICoreWebView2WebResourceRequestedEventArgs* args)
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				COREWEBVIEW2_WEB_RESOURCE_CONTEXT resourceContext;
+
+
+				hr = args->get_ResourceContext(&resourceContext);
+				RETURN_IF_FAILED(hr);
+
+				
+				/*
+				if (resourceContext != COREWEBVIEW2_WEB_RESOURCE_CONTEXT_IMAGE)
+				{
+					//return E_INVALIDARG;
+				}
+				*/
+
+
+				//-----------------------------------------------------------------------
+				wil::com_ptr<ICoreWebView2WebResourceRequest> webResourceRequest;
+
+
+				hr = args->get_Request(&webResourceRequest);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsUri;
+
+
+				hr = webResourceRequest->get_Uri(&ucsUri);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring uri(ucsUri.get());
+				std::wstring urn = getContentsURN(uri);
+
+
+				WUI_TRACE(urn);
+
+
+				//-----------------------------------------------------------------------
+				ResourceWebContents* o = _ResourceWebContentsMap.find(urn);
+
+
+				//-----------------------------------------------------------------------
+				wil::com_ptr<ICoreWebView2WebResourceResponse> response;
+				wil::com_ptr<ICoreWebView2Environment> environment;
+				wil::com_ptr<ICoreWebView2_2> webview;
+
+
+				hr = _ContentsWebView->QueryInterface(IID_PPV_ARGS(&webview));
+				RETURN_IF_FAILED(hr);
+
+				hr = webview->get_Environment(&environment);
+				RETURN_IF_FAILED(hr);
+
+
+				if (nullptr == o)
+				{
+					hr = environment->CreateWebResourceResponse(nullptr, 404, L"Not found", nullptr, &response);
+					RETURN_IF_FAILED(hr);
+				}
+				else
+				{
+					hr = environment->CreateWebResourceResponse(o->_pStream, 200, L"OK", o->_WebContentsType.c_str(), &response);
+					RETURN_IF_FAILED(hr);
+				}
+
+
+				hr = args->put_Response(response.get());
+				RETURN_IF_FAILED(hr);
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_WebResourceRequested_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupWebMessageReceived(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->add_WebMessageReceived(
+		Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
+			[this](ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args)
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsUri;
+
+
+				hr = args->get_Source(&ucsUri);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring uri(ucsUri.get());
+				std::wstring urn = getContentsURN(uri);
+
+
+				if (urn.empty())
+				{
+					return S_OK;
+				}
+
+
+#if 1
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsWebMessage;
+
+
+				hr = args->TryGetWebMessageAsString(&ucsWebMessage);
+				RETURN_IF_FAILED(hr);
+#else
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsWebMessage;
+
+
+				hr = args->get_WebMessageAsJson(&ucsWebMessage);
+				RETURN_IF_FAILED(hr);
+#endif
+
+
+				//-----------------------------------------------------------------------
+				std::wstring webMessage(ucsWebMessage.get());
+
+
+				//-----------------------------------------------------------------------
+				hr = ContentsWebView_onWebMessage(urn, webMessage);
+				RETURN_IF_FAILED(hr);
+
+
+				return S_OK;
+			}
+		).Get(), 
+		&_ContentsWebView_WebMessageReceived_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_onWebMessage(std::wstring urn, std::wstring webMessage)
+{
+	//------------------------------------------------------------------------
+	WUI_TRACE(urn);
+	WUI_TRACE(webMessage);
+
+
+	std::wstring Message = L"[" + webMessage + L"]";
+
+	web::json::value jsonObj = web::json::value::parse(webMessage);
+
+	bool hasField_type = jsonObj.has_field(L"type");
+	bool hasField_target = jsonObj.has_field(L"target");
+	if (!jsonObj.has_field(L"type"))
+	{
+		return S_OK;
+	}
+
+	if (!jsonObj.has_field(L"target"))
+	{
+		return S_OK;
+	}
+
+
+	std::wstring type = jsonObj.at(L"type").as_string();
+	std::wstring target = jsonObj.at(L"target").as_string();
+	std::wstring message = target + L":" + type;
+
+	::MessageBoxW(getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
+
+	//------------------------------------------------------------------------
+	/*
+	// TryGetWebMessageAsString
+	if (webMessage.compare(L"javascript-message") == 0)
+	{
+		ContentsWebView_postWebMessageAsJson();
+	}
+	*/
+
+
+	//------------------------------------------------------------------------
+	// get_WebMessageAsJson
+	if (webMessage.compare(L"\"javascript-message\"") == 0)
+	{
+		ContentsWebView_postWebMessageAsJson();
+	}
+
+	/*
+	{
+		"id":"command",
+		"args":
+		{
+			"from":1,
+			"count":100
+		}
+	}
+	*/
+
+	return S_OK;
+}
+
+void WebView::ContentsWebView_postWebMessageAsJson(void)
+{
+	//------------------------------------------------------------------------
+	std::wstring json;
+	std::wostringstream oss;
+
+
+	//------------------------------------------------------------------------
+	oss << L"{";
+
+	oss << L"\"" << L"id" << L"\"";
+	oss << L":";
+	oss << L"\"" << 100 << L"\"";
+
+	oss << L",";
+
+	oss << L"\"" << L"name" << L"\"";
+	oss << L":";
+	oss << L"\"" << L"code1009" << L"\"";
+
+	oss << L"}";
+
+
+	json = oss.str();
+
+	_ContentsWebView->PostWebMessageAsJson(json.c_str());
+}
+
+HRESULT WebView::ContentsWebView_registerEventHandler(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->add_HistoryChanged(
+		Callback<ICoreWebView2HistoryChangedEventHandler>(
+			[this](ICoreWebView2* webview, IUnknown* args) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsSource;
+				
+				
+				hr = webview->get_Source(&ucsSource);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring source(ucsSource.get());
+
+
+				WUI_TRACE(source);
+
+
+				//-----------------------------------------------------------------------
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_HistoryChanged_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->add_SourceChanged(
+		Callback<ICoreWebView2SourceChangedEventHandler>(
+			[this](ICoreWebView2* webview, ICoreWebView2SourceChangedEventArgs* args) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsSource;
+
+
+				hr = webview->get_Source(&ucsSource);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring source(ucsSource.get());
+				WUI_TRACE(source);
+
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_SourceChanged_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->add_NavigationStarting(
+		Callback<ICoreWebView2NavigationStartingEventHandler>(
+			[this](ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args) -> HRESULT
+			{
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_NavigationStarting_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->add_NavigationCompleted(
+		Callback<ICoreWebView2NavigationCompletedEventHandler>(
+			[this](ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				BOOL navigationSucceeded = FALSE;
+
+				
+				hr = args->get_IsSuccess(&navigationSucceeded);
+				if (SUCCEEDED(hr))
+				{
+					WUI_TRACE(L"navigationSucceeded");
+				}
+				else
+				{
+					WUI_TRACE(L"navigationFailed");
+				}
+
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_NavigationCompleted_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->CallDevToolsProtocolMethod(L"Security.enable", L"{}", nullptr);
+	RETURN_IF_FAILED(hr);
+
+	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Security.securityStateChanged", &_ContentsWebView_Security_securityStateChanged_EventReceiver);
+	RETURN_IF_FAILED(hr);
+
+	hr = _ContentsWebView_Security_securityStateChanged_EventReceiver->add_DevToolsProtocolEventReceived(
+		Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
+			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsJsonArgs;
+
+
+				hr = args->get_ParameterObjectAsJson(&ucsJsonArgs);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring jsonArgs(ucsJsonArgs.get());
+				WUI_TRACE(jsonArgs);
+
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_Security_securityStateChanged_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->CallDevToolsProtocolMethod(L"Log.enable", L"{}", nullptr);
+	RETURN_IF_FAILED(hr);
+
+	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Log.entryAdded", &_ContentsWebView_Log_entryAdded_EventReceiver);
+	RETURN_IF_FAILED(hr);
+
+	hr = _ContentsWebView_Log_entryAdded_EventReceiver->add_DevToolsProtocolEventReceived(
+		Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
+			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsJsonArgs;
+
+
+				hr = args->get_ParameterObjectAsJson(&ucsJsonArgs);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring jsonArgs(ucsJsonArgs.get());
+				WUI_TRACE(jsonArgs);
+
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_Log_entryAdded_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->CallDevToolsProtocolMethod(L"Runtime.enable", L"{}", nullptr);
+	RETURN_IF_FAILED(hr);
+
+	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Runtime.consoleAPICalled", &_ContentsWebView_Runtime_consoleAPICalled_EventReceiver);
+	RETURN_IF_FAILED(hr);
+
+	hr = _ContentsWebView_Runtime_consoleAPICalled_EventReceiver->add_DevToolsProtocolEventReceived(
+		Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
+			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsJsonArgs;
+
+
+				hr = args->get_ParameterObjectAsJson(&ucsJsonArgs);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring jsonArgs(ucsJsonArgs.get());
+				WUI_TRACE(jsonArgs);
+
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_Runtime_consoleAPICalled_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Runtime.exceptionThrown", &_ContentsWebView_Runtime_exceptionThrown_EventReceiver);
+	RETURN_IF_FAILED(hr);
+
+	hr = _ContentsWebView_Runtime_exceptionThrown_EventReceiver->add_DevToolsProtocolEventReceived(
+		Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
+			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsJsonArgs;
+
+
+				hr = args->get_ParameterObjectAsJson(&ucsJsonArgs);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring jsonArgs(ucsJsonArgs.get());
+				WUI_TRACE(jsonArgs);
+
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_Runtime_exceptionThrown_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+}
+
+
+
+

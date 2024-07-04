@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>W2UI Demo: grid/13</title>
+    <link rel="stylesheet" type="text/css" href="./basic.css">
+</head>
+<body>
+
+
+    <div id="toolbar"></div>
+
+
+
+    <script type="module">
+        import { w2toolbar } from './basic.js'
+
+    function JSONstringifyEvent(e) {
+    const obj = {};
+    for (let k in e) {
+    obj[k] = e[k];
+    }
+    return JSON.stringify(obj, (k, v) => {
+    if (v instanceof Node) return 'Node';
+    if (v instanceof Window) return 'Window';
+    return v;
+    }, ' ');
+    }
+
+
+     function stringify_object(object, depth=0, max_depth=0) 
+        {
+    // change max_depth to see more levels, for a touch event, 2 is good
+    if (depth > max_depth)
+        return 'Object';
+
+    const obj = {};
+    for (let key in object) {
+        let value = object[key];
+        if (value instanceof Node)
+            // specify which properties you want to see from the node
+            value = {id: value.id};
+        else if (value instanceof Window)
+            value = 'Window';
+        else if (value instanceof Object)
+            value = stringify_object(value, depth+1, max_depth);
+
+        obj[key] = value;
+    }
+
+    return depth? obj: JSON.stringify(obj);
+}
+        new w2toolbar({
+        box: '#toolbar',
+        name: 'toolbar',
+        items: [
+        { type: 'button', id: 'item1', text: 'Button', icon: 'w2ui-icon-colors' },
+        { type: 'break' },
+        { type: 'check', id: 'item2', text: 'Check 1', icon: 'w2ui-icon-check' },
+        { type: 'check', id: 'item3', text: 'Check 2', icon: 'w2ui-icon-check' },
+        { type: 'break' },
+        { type: 'radio', id: 'item4', group: '1', text: 'Radio 1', icon: 'w2ui-icon-info', checked: true },
+        { type: 'radio', id: 'item5', group: '1', text: 'Radio 2', icon: 'w2ui-icon-paste' },
+        { type: 'spacer' },
+        { type: 'button', id: 'item6', text: 'Button', icon: 'w2ui-icon-cross' }
+        ],
+        onClick(event) {
+        //console.log('Target: '+ event.target, event);
+
+        //const json = JSON.stringify(event);
+        //const json = JSONstringifyEvent(event);
+        const json = stringify_object(event);
+        console.log(json);
+        window.chrome.webview.postMessage(json);
+        }
+        })
+    </script>
+
+
+    <div id="grid" style="width: 800px; height: 400px;"></div>
+
+    <script type="module">
+        import { w2grid } from './basic.js'
+
+        let grid = new w2grid({
+        name: 'grid',
+        box: '#grid',
+        searches: [
+        { field: 'lname', text: 'Last Name', type: 'text' },
+        { field: 'fname', text: 'First Name', type: 'text' },
+        { field: 'email', text: 'Email', type: 'text' },
+        ],
+        show: { footer: true },
+        sortData: [ { field: 'recid', direction: 'asc' } ],
+        columnGroups: [
+        { text: '', span: 1 },
+        { text: 'General Information', span: 2 },
+        { text: 'Email', master: true },
+        { text: 'Important Dates', span: 2 }
+        ],
+        columns: [
+        { field: 'recid', text: 'ID', size: '50px', sortable: true, attr: 'align=center', resizable: true },
+        { field: 'lname', text: 'Last Name', size: '30%', sortable: true, resizable: true },
+        { field: 'fname', text: 'First Name', size: '30%', sortable: true, resizable: true },
+        { field: 'email', text: 'Email', size: '40%', sortable: true, resizable: true },
+        { field: 'sdate', text: 'Start', size: '90px', sortable: true, resizable: true },
+        { field: 'edate', text: 'End', size: '90px', sortable: true, resizable: true },
+        { field: 'udate', text: 'Update', size: '90px', sortable: true, resizable: true }
+        ],
+        records: [
+        { recid: 1, fname: 'Jane', lname: 'Doe', email: 'jdoe@gmail.com', sdate: '4/3/2012', edate: '12/3/2012' },
+        { recid: 2, fname: 'Stuart', lname: 'Motzart', email: 'jdoe@gmail.com', sdate: '4/3/2012', edate: '11/3/2012' },
+        { recid: 3, fname: 'Jin', lname: 'Franson', email: 'peter@gmail.com', sdate: '4/3/2012', edate: '4/3/2012' },
+        { recid: 4, fname: 'Susan', lname: 'Ottie', email: 'frank@gmail.com', sdate: '9/3/2012', edate: '10/3/2012' },
+        { recid: 5, fname: 'Kelly', lname: 'Silver', email: 'jdoe@gmail.com', sdate: '6/3/2012', edate: '4/24/2012' },
+        { recid: 6, fname: 'Francis', lname: 'Gatos', email: 'jdoe@gmail.com', sdate: '2/3/2012', edate: '6/3/2012' },
+        { recid: 7, fname: 'Mark', lname: 'Welldo', email: 'susan@gmail.com', sdate: '4/3/2012', edate: '6/23/2012' },
+        { recid: 8, fname: 'Thomas', lname: 'Bahh', email: 'david@gmail.com', sdate: '9/3/2012', edate: '4/16/2012' },
+        { recid: 9, fname: 'Sergei', lname: 'Rachmaninov', email: 'magi@gmail.com', sdate: '4/3/2012', edate: '4/3/2012' },
+        { recid: 20, fname: 'Jill', lname: 'Doe', email: 'jdoe@gmail.com', sdate: '4/3/2012', edate: '4/3/2012' },
+        { recid: 21, fname: 'Frank', lname: 'Motzart', email: 'peterson@gmail.com', sdate: '4/3/2012', edate: '4/3/2012' },
+        { recid: 22, fname: 'Peter', lname: 'Franson', email: 'jdoe@gmail.com', sdate: '4/3/2012', edate: '8/3/2012' },
+        { recid: 23, fname: 'Andrew', lname: 'Ottie', email: 'magi@gmail.com', sdate: '6/3/2012', edate: '4/19/2012' },
+        { recid: 24, fname: 'Manny', lname: 'Silver', email: 'jdoe@gmail.com', sdate: '4/3/2012', edate: '8/5/2012' },
+        { recid: 25, fname: 'Ben', lname: 'Gatos', email: 'peter@gmail.com', sdate: '9/3/2012', edate: '4/3/2012' },
+        { recid: 26, fname: 'Doer', lname: 'Welldo', email: 'magi@gmail.com', sdate: '4/3/2012', edate: '4/7/2012' },
+        { recid: 27, fname: 'Shashi', lname: 'Bahh', email: 'jdoe@gmail.com', sdate: '4/3/2012', edate: '4/3/2012' },
+        { recid: 28, fname: 'Av', lname: 'Rachmaninov', email: 'joe@gmail.com', sdate: '9/3/2012', edate: '12/6/2012' }
+        ]
+        })
+    </script>
+
+</body>
+</html>
