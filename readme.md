@@ -1,6 +1,6 @@
 # modern_cpp_window_webui
 
-[<img src="screenshot.png">](https://github.com/code1009/modern_cpp_window_webui/screenshot.png)
+[<img src="screenshot.png">](https://github.com/code1009/modern_cpp_window_webui/raw/master/screenshot.png)
 
 Microsoft Edge WebView2 control을 이용해서 webui를 winapi환경에서 구현.  
 
@@ -10,7 +10,7 @@ Microsoft Edge WebView2 control을 이용해서 webui를 winapi환경에서 구�
 
   
 - .rc에 webpage 파일들 등록.  
-- 웹페이지(.js)와 native(C++) application이 json으로 메시지 교환 함.  
+- 웹페이지(.js)와 native application(C++)이 json으로 메시지 교환 함.  
 - w2ui를 이용하면 꽤 쓸만할 것 같음.  
 - 아직 만드는 중...  
 - WinUI3는 다시 봐도 마음에 안든다.
