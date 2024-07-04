@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8" />
+	<title>code1009</title>
+	<link rel="stylesheet" type="text/css" href="/basic.css" />
+    <script type="text/javascript" src="/onload.js"></script>
+
+</head>
+<body>
+
+
+	안녕하세요?
+	<br/>
+	<br/>
+
+	<a href="/page0/index.html">페이지0로 이동</a>
+	<br/>
+	<br/>
+
+
+	<input type="button" id="to_page1" value="페이지1로 이동" />
+	<br/>
+	<br/>
+
+
+	<input type="button" id="button0" value="테스트0" />
+	<input type="button" id="button1" value="테스트1" />
+	<input type="button" id="button2" value="테스트2" />
+	<input type="button" id="button3" value="테스트3" />
+
+	<script type="module">
+	
+		import { navigateContents, contentsPostMessage } from "/basic.js";
+		
+		let target;
+		
+		
+		target = document.getElementById("to_page1");
+		target.addEventListener(
+			"click", 
+			(e) => 
+				{
+					navigateContents("/page1/index.html");
+				}
+		);
+	
+		target = document.getElementById("button0");
+		target.addEventListener(
+			"click", 
+			(e) => 
+				{
+					contentsPostMessage(e);
+				}
+		);
+	
+		target = document.getElementById("button1");
+		target.addEventListener(
+			"click", 
+			(e) => 
+				{
+					let jsonMessage = 
+					{
+						type: "command",
+						target: "100",
+						param:
+						{
+							from: 1,
+							count: 100
+						}
+					};
+			
+					contentsPostMessage(jsonMessage);
+				}
+		);
+
+		target = document.getElementById("button2");
+		target.addEventListener(
+			"click", 
+			(e) => 
+				{
+                    var win = window.open("/page1/list0.json", "PopupWin", "width=500,height=600");
+                }
+        );
+
+
+	</script>
+
+</body>
+</html>

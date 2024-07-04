@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<title>code1009</title>
+<link rel="stylesheet" type="text/css" href="/basic.css">
+<link rel="stylesheet" type="text/css" href="/w2ui/master/dist/w2ui.min.css">
+<script type="text/javascript" src="/onload.js"></script>
+
+</head>
+<body>
+
+<div id="toolbar"></div>
+<script type="module">
+import { w2toolbar } from '/w2ui/master/dist/w2ui.es6.min.js'
+import { navigateContents, contentsPostMessage } from "/basic.js";
+
+new w2toolbar({
+    box: '#toolbar',
+    name: 'toolbar',
+    items: [
+        { type: 'button', id: 'item1', text: 'Button', icon: 'w2ui-icon-colors' },
+        { type: 'break' },
+        { type: 'check', id: 'item2', text: 'Check 1', icon: 'w2ui-icon-check' },
+        { type: 'check', id: 'item3', text: 'Check 2', icon: 'w2ui-icon-check' },
+        { type: 'break' },
+        { type: 'radio', id: 'item4', group: '1', text: 'Radio 1', icon: 'w2ui-icon-info', checked: true },
+        { type: 'radio', id: 'item5', group: '1', text: 'Radio 2', icon: 'w2ui-icon-paste' },
+        { type: 'spacer' },
+        { type: 'button', id: 'item6', text: 'Button', icon: 'w2ui-icon-cross' }
+    ],
+    onClick(event) {
+		if(event.target!="item6")
+		{
+			console.log('Target: '+ event.target, event)
+			contentsPostMessage(event);
+		}
+		else
+		{
+			navigateContents("/index.html");
+		}
+    }
+})
+</script>
+
+
+
+<div id="grid" style="width: 100%; height: 500px"></div>
+<br>
+<span id="log"></span>
+
+페이지1
+<br/>
+<br/>
+
+<input type="button" id="button1" value="홈" />
+<input type="button" id="button2" value="테스트" />
+<br/>
+<br/>
+
+
+<script type="module">
+
+//---------------------------------------------------------------------------
+import { w2grid, query } from '/w2ui/master/dist/w2ui.es6.min.js'
+import { navigateContents, contentsPostMessage } from "/basic.js";
+import { cppMsgHandler } from "/cppmsghandler.js";
+
+//---------------------------------------------------------------------------
+let grid = new w2grid({
+    name: 'grid',
+    box: '#grid',
+    show: {
+        lineNumbers: true,
+        footer: true
+    },
+//    url: '/page1/list0.json',
+//    method: 'GET', // need this to avoid 412 error on Safari
+    limit: 50,
+    autoLoad: false,
+    columns: [
+        { field: 'fname', text: 'First Name', size: '200px' },
+        { field: 'lname', text: 'Last Name', size: '200px' },
+        { field: 'sdate', text: 'Start Date', size: '140px' },
+        { field: 'random', text: 'Random', size: '100%' },
+    ],
+})
+
+/*
+let timeout
+
+window.live = function(time) {
+    let stats = []
+    clearInterval(timeout)
+    if (time) {
+        timeout = setInterval(() => {
+            grid.records.forEach(rec => {
+                let rnd = Math.floor(Math.random() * 10000) / 10000
+                if (rec._fname == null) {
+                    rec._fname = rec.fname
+                    rec._lname = rec.lname
+                    rec._sdate = rec.sdate
+                }
+                if (rnd > 0.5) {
+                    rec.w2ui = { style: 'color: ' + (Math.random() > 0.7 ? 'red' : 'green') }
+                } else {
+                    rec.w2ui = { style: '' }
+                }
+                rec.fname = rec._fname + ' ' + rnd
+                rec.lname = rec._lname + ' ' + rnd
+                rec.sdate = rec._sdate + ' ' + rnd
+                rec.random = 'Rand: ' + rnd
+            })
+            if (stats.length > (1000 / time)) {
+                // calculate average time
+                let avg = Math.floor(Math.round(stats.reduce((prev, curr) => prev + curr) / stats.length * 10)) / 10
+                query('#log').html('Average update time: ' + avg + ' ms')
+                stats = []
+            }
+            stats.push(grid.update())
+        }, time)
+    }
+}
+*/
+
+grid.add( {recid:0, fname:'{a}', lname:'{b}', sdate:'{c}', random:'{d}' } );
+
+function add_rec1(n, a,b,c,d)
+{
+/*
+	let rnd = Math.floor(Math.random() * 10000) / 10000;
+
+	let rec = new ;
+
+	rec.fname  = "rec.fname " + ' ' + rnd;
+	rec.lname  = "rec.lname " + ' ' + rnd;
+	rec.sdate  = "rec.sdate " + ' ' + rnd;
+	rec.random = "rec.random" + ' ' + rnd;
+*/
+
+	//grid.add( { recid:'${n}', fname:'${a}', lname:'${b}', sdate:'${c}', random:'${d}' } );
+	grid.add( { recid:n, fname:a, lname:b, sdate:c, random:d } );
+}
+
+let _count = 2;
+
+function add_rec2(n, a,b,c,d)
+{
+	let rnd = Math.floor(Math.random() * 10000) / 10000;
+	
+	var rec =
+	{
+		"recid" :n,
+		"fname" :a+ ' ' + rnd,
+		"lname" :b+ ' ' + rnd,
+		"sdate" :c+ ' ' + rnd,
+		"random":d+ ' ' + rnd
+	};
+	
+	if (_count<50)
+	{
+		grid.add( rec );
+		_count++;
+	}
+	else
+	{
+		var i;
+		
+		for(i=0; i<_count-1; i++)
+		{
+			grid.records[i].recid  =grid.records[i+1].recid  ;
+			grid.records[i].fname  =grid.records[i+1].fname  ;
+			grid.records[i].lname  =grid.records[i+1].lname  ;
+			grid.records[i].sdate  =grid.records[i+1].sdate  ;
+			grid.records[i].random =grid.records[i+1].random ;
+		}
+		grid.records[i].recid  =rec.recid ;
+		grid.records[i].fname  =rec.fname ;
+		grid.records[i].lname  =rec.lname ;
+		grid.records[i].sdate  =rec.sdate ;
+		grid.records[i].random =rec.random;
+	}
+	
+	grid.update();
+}
+
+
+add_rec1(1, "가나다라1","가나다라2","가나다라3","가나다라4");
+add_rec2(2, "가나다라1","가나다라2","가나다라3","가나다라4");
+
+
+//---------------------------------------------------------------------------
+let target;
+
+
+target = document.getElementById("button1");
+target.addEventListener(
+	"click", 
+	(e) => 
+		{
+			navigateContents("/index.html");
+		}
+);
+
+target = document.getElementById("button2");
+target.addEventListener(
+	"click", 
+	(e) => 
+		{
+			var msg =
+			{
+				"target" : "gridUpdate",
+				"type"   : "click"
+			};
+			
+			contentsPostMessage(msg);
+		}
+);
+
+
+
+//---------------------------------------------------------------------------
+/*
+let _cppMsgHandler;
+
+_cppMsgHandler = new cppMsgHandler();
+*/
+window.chrome.webview.addEventListener(
+	"message", 
+	arg => 
+	{
+		if (("id" in arg.data) && ("name" in arg.data))
+		{
+			var id = arg.data.id;
+			var name = arg.data.name;
+
+
+			switch(id)
+			{
+			case 100:
+				add_rec2(arg.data.no, name, name, name, name);
+				break;
+			}
+		}
+	}
+);
+
+</script>
+
+
+</body>
+</html>

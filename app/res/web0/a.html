@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<title>code1009</title>
+
+
+<style>
+
+.TableComponent {
+    overflow: auto;
+    width: 100%;
+}
+
+.TableComponent table {
+    border: 1px solid #dededf;
+    height: 100%;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 1px;
+    text-align: left;
+}
+
+.TableComponent caption {
+    caption-side: top;
+    text-align: left;
+}
+
+.TableComponent th {
+    border: 1px solid #dededf;
+    background-color: #eceff1;
+    color: #000000;
+    padding: 5px;
+}
+
+.TableComponent td {
+    border: 1px solid #dededf;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 5px;
+}
+
+</style>
+
+
+</head>
+<body>
+
+
+<table>
+
+<tr>
+<th>a</th><th>b</th><th>c</th>
+</tr>
+
+<tr>
+<td>a</td><td>b</td><td>c</td>
+</tr>
+<tr>
+<td>a</td><td>b</td><td>c</td>
+</tr>
+
+</table>
+
+<div id="myTable" class="TableComponent" ></div>
+
+
+<script type="module">
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+class Record
+{
+	_no;
+	_name;
+	
+	constructor(no, name) 
+	{
+		this._no = no;
+		this._name = name;
+	}
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+class Table
+{
+	_Array;
+	_MaxVisibleCount;
+	_ComponentTag;
+	_TableTag;
+	
+	constructor() 
+	{
+		this._Array = new Array();
+		this._MaxVisibleCount = 5;
+		this._ComponentTag = document.getElementById("myTable");
+		this.putTableHtml();
+	}
+	
+	addRecord(rec)
+	{
+		if (this._Array.length<this._MaxVisibleCount)
+		{
+			this._Array.push(rec);
+		}
+		else
+		{
+			let i;
+			let count;
+			
+			
+			count = this._Array.length;
+			for(i=0; i<count-1; i++)
+			{
+				this._Array[i]._no    = this._Array[i+1]._no    ;
+				this._Array[i]._name  = this._Array[i+1]._name  ;
+			}
+			
+			
+			this._Array[i]._no   = rec._no   ;
+			this._Array[i]._name = rec._name ;
+		}
+		
+		this.putHtml();
+	}
+
+	putTableHtml()
+	{
+		let html;
+		
+		
+		html = "<table id=\"myTable.TableTag\" >";
+		html += "<tr>";
+		html += "<th width=\"100px\">no</th>";
+		html += "<th>name</th>";
+		html += "</tr>";
+		html += "</table>";
+		
+		
+		this._ComponentTag.insertAdjacentHTML("beforeEnd", html);
+		
+		this._TableTag = document.getElementById("myTable.TableTag");
+	}
+	
+	putRecordOddHtml(rec)
+	{
+		let html;
+
+
+		html = "<tr>";
+		html += "<td >"
+		html += rec._no;
+		html += "</td>";
+		html += "<td>"
+		html += rec._name;
+		html += "</td>";
+		html += "</tr>";
+
+
+		this._TableTag.insertAdjacentHTML("beforeEnd", html);
+	}
+
+	putRecordEvenHtml(rec)
+	{
+		let html;
+
+
+		html = "<tr>";
+		html += "<td >"
+		html += rec._no;
+		html += "</td>";
+		html += "<td>"
+		html += rec._name;
+		html += "</td>";
+		html += "</tr>";
+
+
+		this._TableTag.insertAdjacentHTML("beforeEnd", html);
+	}
+	
+	putRecordHtml(rec)
+	{
+		if (rec._no%2)
+		{
+			this.putRecordOddHtml(rec);
+		}
+		else
+		{
+			this.putRecordEvenHtml(rec);
+		}
+	}
+
+	putHtml()
+	{		
+		this._ComponentTag.innerHTML = "";
+
+
+		this.putTableHtml();
+
+		this._Array.forEach(
+			rec => 
+			{
+				this.putRecordHtml(rec);
+			}
+		);
+	}
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+let _myTable = new Table();
+
+_myTable.addRecord(new Record(1, "이름1"));
+_myTable.addRecord(new Record(2, "이름2"));
+_myTable.addRecord(new Record(3, "이름3"));
+_myTable.addRecord(new Record(4, "이름4"));
+_myTable.addRecord(new Record(5, "이름5"));
+_myTable.addRecord(new Record(6, "이름6"));
+_myTable.addRecord(new Record(7, "이름7"));
+_myTable.addRecord(new Record(8, "이름8"));
+_myTable.addRecord(new Record(9, "이름9"));
+_myTable.addRecord(new Record(10, "이름10"));
+
+//_myTable.putHtml();
+//_myTable.putHtml();
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+ function myTable_Add(no, name)
+ {
+	_myTable.addRecord(new Record(no, name));
+ }
+
+
+
+
+ 
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+let timeout;
+let count = 10;;
+
+window.live = function(time) 
+{
+    clearInterval(timeout)
+    if (time) 
+	{
+        timeout = setInterval(
+			() => 
+			{
+				_myTable.addRecord(new Record(count++, "이름10"));
+				_myTable.putHtml();
+            }
+			,
+			time
+		);
+    }
+}
+
+live(1000);
+
+</script>
+
+
+</body>
+</html>
