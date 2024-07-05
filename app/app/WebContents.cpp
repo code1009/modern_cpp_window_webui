@@ -81,33 +81,36 @@ bool WebContentsResourceStream::load(void)
 		return false;
 	}
 
-	_hResourceGlobal = ::GlobalAlloc(GMEM_MOVEABLE, resourceSize);
-	if (_hResourceGlobal)
+	_hGlobal = ::GlobalAlloc(GMEM_MOVEABLE, resourceSize);
+	if (_hGlobal)
 	{
-		_pResource = ::GlobalLock(_hResourceGlobal);
-		if (_pResource)
+		_pGlobal = ::GlobalLock(_hGlobal);
+		if (_pGlobal)
 		{
-			CopyMemory(_pResource, pResourceData, resourceSize);
+			CopyMemory(_pGlobal, pResourceData, resourceSize);
 
 
-			if (::CreateStreamOnHGlobal(_hResourceGlobal, FALSE, &_pStream) == S_OK)
+			if (::CreateStreamOnHGlobal(_hGlobal, FALSE, &_pStream) == S_OK)
 			{
-				_dwResourceSize = resourceSize;
+				_GlobalSize = resourceSize;
+
+				_hResource = hResource;
 
 				return true;
 			}
 
 
-			::GlobalUnlock(_hResourceGlobal);
+			::GlobalUnlock(_hGlobal);
 		}
-		::GlobalFree(_hResourceGlobal);
+		::GlobalFree(_hGlobal);
 	}
 
 
 	_hResource = nullptr;
-	_hResourceGlobal = nullptr;
-	_pResource = nullptr;
-	_dwResourceSize = 0;
+
+	_hGlobal = nullptr;
+	_pGlobal = nullptr;
+	_GlobalSize = 0;
 
 	_pStream = nullptr;
 
@@ -122,18 +125,188 @@ void WebContentsResourceStream::unload(void)
 		_pStream = nullptr;
 	}
 
-	if (_hResource)
+	if (_hGlobal)
 	{
-		::GlobalUnlock(_hResource);
-		::GlobalFree(_hResource);
+		::GlobalUnlock(_hGlobal);
+		::GlobalFree(_hGlobal);
 
-		_hResource = nullptr;
-		_hResourceGlobal = nullptr;
-		_pResource = nullptr;
-		_dwResourceSize = 0;
+		_hGlobal = nullptr;
+		_pGlobal = nullptr;
+		_GlobalSize = 0;
+	}
+
+	_hResource = nullptr;
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+WebContentsUTF8StringStream::WebContentsUTF8StringStream(const std::wstring& s)
+{
+	_UTF8String = wcs_to_mbcs(s, CP_UTF8);
+
+
+	bool rv;
+
+
+	rv = load();
+	if (false == rv)
+	{
+		throw std::wstring(L"WebContentsUTF8StringStream ctor");
 	}
 }
 
+WebContentsUTF8StringStream::WebContentsUTF8StringStream(const std::string& s)
+{
+	_UTF8String = mbcs_to_utf8(s, CP_ACP);
+
+
+	bool rv;
+
+
+	rv = load();
+	if (false == rv)
+	{
+		throw std::wstring(L"WebContentsUTF8StringStream ctor");
+	}
+}
+
+WebContentsUTF8StringStream::~WebContentsUTF8StringStream()
+{
+	unload();
+}
+
+IStream* WebContentsUTF8StringStream::getStream(void) const
+{
+	return _pStream;
+};
+
+std::wstring WebContentsUTF8StringStream::mbcs_to_wcs(std::string input, UINT codepage)
+{
+	int len = MultiByteToWideChar(codepage, 0, input.c_str(), -1, NULL, 0);
+
+
+	if (len > 0)
+	{
+		std::vector<wchar_t> buf(len);
+
+
+		MultiByteToWideChar(codepage, 0, input.c_str(), -1, &buf[0], len);
+
+		return std::wstring(&buf[0]);
+	}
+
+	return std::wstring();
+}
+
+std::string WebContentsUTF8StringStream::wcs_to_mbcs(std::wstring input, UINT codepage)
+{
+	int len = WideCharToMultiByte(codepage, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
+
+
+	if (len > 0)
+	{
+		std::vector<char> buf(len);
+
+
+		WideCharToMultiByte(codepage, 0, input.c_str(), -1, &buf[0], len, NULL, NULL);
+
+		return std::string(&buf[0]);
+	}
+
+	return std::string();
+}
+
+std::string WebContentsUTF8StringStream::utf8_to_mbcs(std::string /*input*/utf8, UINT codepage)
+{
+	//	std::string  utf8 ;
+	std::wstring utf16;
+	std::string  mbcs;
+
+
+	//	utf8  = input;
+	utf16 = mbcs_to_wcs(utf8, CP_UTF8);
+	mbcs = wcs_to_mbcs(utf16, codepage);
+
+	return mbcs;
+}
+
+std::string WebContentsUTF8StringStream::mbcs_to_utf8(std::string /*input*/mbcs, UINT codepage)
+{
+	std::string  utf8;
+	std::wstring utf16;
+	//	std::string  mbcs ;
+
+
+	//	mbcs  = input;
+	utf16 = mbcs_to_wcs(mbcs, codepage);
+	utf8 = wcs_to_mbcs(utf16, CP_UTF8);
+
+	return utf8;
+}
+
+bool WebContentsUTF8StringStream::load(void)
+{
+	const void* ptr = _UTF8String.c_str();
+	std::size_t size = _UTF8String.size();
+
+
+	_hGlobal = ::GlobalAlloc(GMEM_MOVEABLE, size);
+	if (_hGlobal)
+	{
+		_pGlobal = ::GlobalLock(_hGlobal);
+		if (_pGlobal)
+		{
+			CopyMemory(_pGlobal, ptr, size);
+
+
+			if (::CreateStreamOnHGlobal(_hGlobal, FALSE, &_pStream) == S_OK)
+			{
+				_GlobalSize = size;
+
+				return true;
+			}
+
+
+			::GlobalUnlock(_hGlobal);
+		}
+		::GlobalFree(_hGlobal);
+	}
+
+
+	_hGlobal = nullptr;
+	_pGlobal = nullptr;
+	_GlobalSize = 0;
+
+	_pStream = nullptr;
+
+	return false;
+}
+
+void WebContentsUTF8StringStream::unload(void)
+{
+	if (_pStream)
+	{
+		_pStream->Release();
+		_pStream = nullptr;
+	}
+
+	if (_hGlobal)
+	{
+		::GlobalUnlock(_hGlobal);
+		::GlobalFree(_hGlobal);
+
+		_hGlobal = nullptr;
+		_pGlobal = nullptr;
+		_GlobalSize = 0;
+	}
+
+
+	_UTF8String.clear();
+}
 
 
 

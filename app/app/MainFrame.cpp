@@ -76,7 +76,7 @@ void MainFrame::initializeWindowClass(void)
 
 
 	getWindowClass().lpszClassName = windowClassName.c_str();
-	getWindowClass().lpszMenuName  = wui::getWindowInstance()->makeIntResource(IDC_APP);
+	getWindowClass().lpszMenuName  = nullptr; // wui::getWindowInstance()->makeIntResource(IDC_APP);
 	getWindowClass().hIcon         = wui::getWindowInstance()->loadIcon(IDC_APP);
 	getWindowClass().hIconSm       = wui::getWindowInstance()->loadIcon(IDI_SMALL);
 }

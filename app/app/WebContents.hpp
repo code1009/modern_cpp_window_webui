@@ -34,12 +34,14 @@ public:
 class WebContentsResourceStream final : public WebContentsStream
 {
 private:
-	std::wstring _ResourceName   { };
-	HRSRC        _hResource      { nullptr };
-	HGLOBAL      _hResourceGlobal{ nullptr };
-	LPVOID       _pResource      { nullptr };
-	DWORD        _dwResourceSize { 0 };
-	IStream*     _pStream        { nullptr };
+	std::wstring _ResourceName{ };
+	HRSRC        _hResource{ nullptr };
+
+	HGLOBAL     _hGlobal{ nullptr };
+	void*       _pGlobal{ nullptr };
+	std::size_t _GlobalSize{ 0 };
+
+	IStream* _pStream{ nullptr };
 
 public:
 	explicit WebContentsResourceStream(const std::wstring& resourceName);
@@ -54,6 +56,49 @@ public:
 
 public:
 	virtual IStream* getStream(void) const override;
+
+private:
+	bool load(void);
+	void unload(void);
+};
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+class WebContentsUTF8StringStream final : public WebContentsStream
+{
+private:
+	std::string _UTF8String{ };
+
+	HGLOBAL     _hGlobal{ nullptr };
+	void*       _pGlobal{ nullptr };
+	std::size_t _GlobalSize{ 0 };
+
+	IStream* _pStream{ nullptr };
+
+public:
+	explicit WebContentsUTF8StringStream(const std::wstring& s);
+	explicit WebContentsUTF8StringStream(const std::string& s);
+	virtual ~WebContentsUTF8StringStream();
+
+public:
+	WebContentsUTF8StringStream(const WebContentsUTF8StringStream&) = delete;
+	WebContentsResourceStream& operator=(const WebContentsUTF8StringStream&) = delete;
+
+	WebContentsUTF8StringStream(WebContentsUTF8StringStream&&) = delete;
+	WebContentsUTF8StringStream& operator=(WebContentsUTF8StringStream&&) = delete;
+
+public:
+	virtual IStream* getStream(void) const override;
+
+public:
+	std::wstring mbcs_to_wcs(std::string input, UINT codepage);
+	std::string wcs_to_mbcs(std::wstring input, UINT codepage);
+	std::string utf8_to_mbcs(std::string /*input*/utf8, UINT codepage);
+	std::string mbcs_to_utf8(std::string /*input*/mbcs, UINT codepage);
 
 private:
 	bool load(void);

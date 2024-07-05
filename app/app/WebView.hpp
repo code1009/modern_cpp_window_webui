@@ -66,12 +66,12 @@ public:
 	void onTest2(wui::WindowMessage& windowMessage);
 	
 public:
-	int getDPIAwareBound(int bound);
+	int getDPIAwareBound(int bound) const;
 
 public:
-	std::wstring getContentsDataFolder(void);
-	std::wstring getContentsHost(void);
-	std::wstring getContentsURN(std::wstring uri);
+	std::wstring getContentsDataFolder(void) const;
+	std::wstring getContentsHost(void) const;
+	std::wstring getContentsURN(const std::wstring& uri) const;
 
 public:
 	void createWebView(void);
@@ -87,12 +87,22 @@ public:
 
 public:
 	HRESULT ContentsWebView_setupWebResourceRequestedFilter(void);
+
+public:
 	HRESULT ContentsWebView_setupWebMessageReceived(void);
-	HRESULT ContentsWebView_onWebMessage(std::wstring urn, std::wstring webMessage);
-	void    ContentsWebView_postWebMessageAsJson(void);
+	void ContentsWebView_onWebMessage(const std::wstring& urn, const std::wstring& webMessage);
+	void ContentsWebView_postWebMessageAsJson(const std::wstring& msg);
 
 public:
 	HRESULT ContentsWebView_registerEventHandler(void);
+
+public:
+	void navigate(const std::wstring& uri);
+	void navigateContents(const std::wstring& urn);
+
+public:
+	void postCppMessage0ToContentsWebView(void);
+	void postCppMessage1ToContentsWebView(void);
 };
 
 

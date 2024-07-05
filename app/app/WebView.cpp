@@ -57,12 +57,15 @@ WebView::WebView(HWND hParent)
 		windowText.c_str(),
 		static_cast<DWORD>(style),
 		static_cast<DWORD>(styleEx)
-		//rect.left, rect.top, rect.right, rect.bottom
 	);
 	if (!hwnd)
 	{
 		throw std::wstring(L"WebView::WebView(): createWindow() failed");
 	}
+
+
+	//-----------------------------------------------------------------------
+	registerContentsMap();
 
 
 	//-----------------------------------------------------------------------
@@ -176,7 +179,6 @@ void WebView::onCommand(wui::WindowMessage& windowMessage)
 
 void WebView::onTest1(wui::WindowMessage& windowMessage)
 {
-	ContentsWebView_postWebMessageAsJson();
 }
 
 void WebView::onTest2(wui::WindowMessage& windowMessage)
@@ -184,7 +186,7 @@ void WebView::onTest2(wui::WindowMessage& windowMessage)
 }
 
 //===========================================================================
-int WebView::getDPIAwareBound(int bound)
+int WebView::getDPIAwareBound(int bound) const
 {
 	constexpr int DEFAULT_DPI = 96;
 
@@ -192,7 +194,7 @@ int WebView::getDPIAwareBound(int bound)
 }
 
 //===========================================================================
-std::wstring WebView::getContentsDataFolder(void)
+std::wstring WebView::getContentsDataFolder(void) const
 {
 	WCHAR path[MAX_PATH];
 
@@ -221,7 +223,7 @@ std::wstring WebView::getContentsDataFolder(void)
 	return dataDirectory;
 }
 
-std::wstring WebView::getContentsHost(void)
+std::wstring WebView::getContentsHost(void) const
 {
 	std::wstring host = L"https://www.code1009.com";
 
@@ -229,7 +231,7 @@ std::wstring WebView::getContentsHost(void)
 	return host;
 }
 
-std::wstring WebView::getContentsURN(std::wstring uri)
+std::wstring WebView::getContentsURN(const std::wstring& uri) const
 {
 	std::wstring host = getContentsHost();
 	std::wstring urn;
@@ -243,13 +245,39 @@ std::wstring WebView::getContentsURN(std::wstring uri)
 	return urn;
 }
 
+void WebView::registerContentsMap(void)
+{
+	_ContentsMap.registerWebContents(L"/index.html", std::make_shared<WebContentsResourceStream>(L"index.html"));
+	_ContentsMap.registerWebContents(L"/basic.js", std::make_shared<WebContentsResourceStream>(L"basic.js"));
+	_ContentsMap.registerWebContents(L"/basic.css", std::make_shared<WebContentsResourceStream>(L"basic.css"));
+	//_ContentsMap.registerWebContents(L"/favicon.ico", std::make_shared<WebContentsResourceStream>(L"favicon.ico"));
+
+
+	//------------------------------------------------------------------------
+	std::ostringstream oss;
+
+
+	oss << "{";
+
+	oss << "\"" << "id" << "\"";
+	oss << ":";
+	oss << "\"" << 100 << "\"";
+
+	oss << ",";
+
+	oss << "\"" << "name" << "\"";
+	oss << ":";
+	oss << "\"" << "한글" << "\"";
+
+	oss << "}";
+
+
+	_ContentsMap.registerWebContents(L"/test.json", std::make_shared<WebContentsUTF8StringStream>(oss.str()));
+}
+
 //===========================================================================
 void WebView::createWebView(void)
 {	
-	//-----------------------------------------------------------------------
-	registerContentsMap();
-
-
 	//-----------------------------------------------------------------------
 	HRESULT hr;
 
@@ -283,16 +311,8 @@ void WebView::createWebView(void)
 
 void WebView::destroyWebView(void)
 {
-	//_ContentsWebViewController->Release();
+	//_ContentsWebViewController->Release(); DO NOT CALL!!!
 	_ContentsWebViewEnvironment->Release();
-}
-
-void WebView::registerContentsMap(void)
-{
-	_ContentsMap.registerWebContents(L"/index.html", std::make_shared<WebContentsResourceStream>(L"index.html"));
-	_ContentsMap.registerWebContents(L"/basic.js", std::make_shared<WebContentsResourceStream>(L"basic.js"));
-	_ContentsMap.registerWebContents(L"/basic.css", std::make_shared<WebContentsResourceStream>(L"basic.css"));
-	//_ContentsMap.registerWebContents(L"/favicon.ico", std::make_shared<WebContentsResourceStream>(L"favicon.ico"));
 }
 
 HRESULT WebView::createContentsWebViewController(void)
@@ -417,12 +437,8 @@ HRESULT WebView::setupContentsWebView(void)
 
 
 	//-----------------------------------------------------------------------
-	std::wstring uri;
-
-
-	uri = getContentsHost() + L"/index.html";
-	hr = _ContentsWebView->Navigate(uri.c_str());
-	RETURN_IF_FAILED(hr);
+	navigateContents(L"/index.html");
+	//navigateContents(L"/test.json");
 
 
 	return S_OK;
@@ -659,8 +675,7 @@ HRESULT WebView::ContentsWebView_setupWebMessageReceived(void)
 
 
 				//-----------------------------------------------------------------------
-				hr = ContentsWebView_onWebMessage(urn, webMessage);
-				RETURN_IF_FAILED(hr);
+				ContentsWebView_onWebMessage(urn, webMessage);
 
 
 				return S_OK;
@@ -674,44 +689,29 @@ HRESULT WebView::ContentsWebView_setupWebMessageReceived(void)
 	return S_OK;
 }
 
-HRESULT WebView::ContentsWebView_onWebMessage(std::wstring urn, std::wstring webMessage)
+void WebView::ContentsWebView_postWebMessageAsJson(const std::wstring& msg)
 {
-	//------------------------------------------------------------------------
-	WUI_TRACE(urn);
-	WUI_TRACE(webMessage);
+	HRESULT hr;
 
 
-	std::wstring Message = L"[" + webMessage + L"]";
-
-	web::json::value jsonObj = web::json::value::parse(webMessage);
-
-	bool hasField_type = jsonObj.has_field(L"type");
-	bool hasField_target = jsonObj.has_field(L"target");
-	if (!jsonObj.has_field(L"type"))
+	hr = _ContentsWebView->PostWebMessageAsJson(msg.c_str());
+	if (FAILED(hr))
 	{
-		return S_OK;
+		WUI_TRACE(L"failed");
 	}
+}
 
-	if (!jsonObj.has_field(L"target"))
-	{
-		return S_OK;
-	}
-
-
-	std::wstring type = jsonObj.at(L"type").as_string();
-	std::wstring target = jsonObj.at(L"target").as_string();
-	std::wstring message = target + L":" + type;
-
-	::MessageBoxW(getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
-
+void WebView::ContentsWebView_onWebMessage(const std::wstring& urn, const std::wstring& webMessage)
+{
+#if 0
+#if 1
 	//------------------------------------------------------------------------
-	/*
 	// TryGetWebMessageAsString
 	if (webMessage.compare(L"javascript-message") == 0)
 	{
 		ContentsWebView_postWebMessageAsJson();
 	}
-	*/
+#else
 
 
 	//------------------------------------------------------------------------
@@ -720,49 +720,40 @@ HRESULT WebView::ContentsWebView_onWebMessage(std::wstring urn, std::wstring web
 	{
 		ContentsWebView_postWebMessageAsJson();
 	}
+#endif
+#endif
 
-	/*
+
+	//------------------------------------------------------------------------
+	WUI_TRACE(urn);
+	WUI_TRACE(webMessage);
+
+
+	//------------------------------------------------------------------------
+	web::json::value jsonObj = web::json::value::parse(webMessage);
+
+
+	if (!jsonObj.has_field(L"type"))
 	{
-		"id":"command",
-		"args":
-		{
-			"from":1,
-			"count":100
-		}
+		return;
 	}
-	*/
 
-	return S_OK;
-}
-
-void WebView::ContentsWebView_postWebMessageAsJson(void)
-{
-	//------------------------------------------------------------------------
-	std::wstring json;
-	std::wostringstream oss;
+	if (!jsonObj.has_field(L"target"))
+	{
+		return;
+	}
 
 
 	//------------------------------------------------------------------------
-	oss << L"{";
-
-	oss << L"\"" << L"id" << L"\"";
-	oss << L":";
-	oss << L"\"" << 100 << L"\"";
-
-	oss << L",";
-
-	oss << L"\"" << L"name" << L"\"";
-	oss << L":";
-	oss << L"\"" << L"code1009" << L"\"";
-
-	oss << L"}";
+	std::wstring type = jsonObj.at(L"type").as_string();
+	std::wstring target = jsonObj.at(L"target").as_string();
+	std::wstring message = target + L" : " + type;
 
 
-	json = oss.str();
-
-	_ContentsWebView->PostWebMessageAsJson(json.c_str());
+	::MessageBoxW(getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
 }
 
+//===========================================================================
 HRESULT WebView::ContentsWebView_registerEventHandler(void)
 {
 	//-----------------------------------------------------------------------
@@ -1021,6 +1012,78 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 
 	return S_OK;
+}
+
+//===========================================================================
+void WebView::navigate(const std::wstring& uri)
+{
+	HRESULT hr;
+
+
+	hr = _ContentsWebView->Navigate(uri.c_str());
+	if (FAILED(hr))
+	{
+		WUI_TRACE(L"failed");
+	}
+}
+
+void WebView::navigateContents(const std::wstring& urn)
+{
+	std::wstring uri;
+
+
+	uri = getContentsHost() + urn;
+	navigate(uri);
+}
+
+//===========================================================================
+void WebView::postCppMessage0ToContentsWebView(void)
+{
+	std::wostringstream oss;
+
+
+	oss << L"{";
+
+	oss << L"\"" << L"id" << L"\"";
+	oss << L":";
+	oss << L"\"" << 100 << L"\"";
+
+	oss << L",";
+
+	oss << L"\"" << L"name" << L"\"";
+	oss << L":";
+	oss << L"\"" << L"code1009" << L"\"";
+
+	oss << L"}";
+
+
+	ContentsWebView_postWebMessageAsJson(oss.str());
+}
+
+void WebView::postCppMessage1ToContentsWebView(void)
+{
+	//------------------------------------------------------------------------
+	std::wstring json;
+	std::wostringstream oss;
+
+
+	//------------------------------------------------------------------------
+	oss << L"{";
+
+	oss << L"\"" << L"id" << L"\"";
+	oss << L":";
+	oss << L"\"" << 100 << L"\"";
+
+	oss << L",";
+
+	oss << L"\"" << L"name" << L"\"";
+	oss << L":";
+	oss << L"\"" << L"code1009" << L"\"";
+
+	oss << L"}";
+
+
+	ContentsWebView_postWebMessageAsJson(oss.str());
 }
 
 
