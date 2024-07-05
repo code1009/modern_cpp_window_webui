@@ -2,39 +2,67 @@
 <html>
 <head>
 
-	<meta charset="utf-8">
-	<title>code1009</title>
-	<link rel="stylesheet" type="text/css" href="/basic.css">
-	<script type="text/javascript" src="/onload.js"></script>
-	
+<meta charset="utf-8">
+<title>code1009</title>
+<link rel="stylesheet" type="text/css" href="/basic.css">
+<link rel="stylesheet" type="text/css" href="/w2ui/master/dist/w2ui.min.css">
+<script type="text/javascript" src="/onload.js"></script>
+
 </head>
 <body>
 
-	페이지1
-	<br/>
-	<br/>
+<div id="toolbar"></div>
+<script type="module">
+import { w2toolbar } from '/w2ui/master/dist/w2ui.es6.min.js'
+import { navigateContents, contentsPostMessage } from "/basic.js";
 
-	<input type="button" id="button1" value="홈" />
-	<br/>
-	<br/>
+new w2toolbar({
+    box: '#toolbar',
+    name: 'toolbar',
+    items: [
+        { type: 'button', id: 'item1', text: 'Button', icon: 'w2ui-icon-colors' },
+        { type: 'break' },
+        { type: 'check', id: 'item2', text: 'Check 1', icon: 'w2ui-icon-check' },
+        { type: 'check', id: 'item3', text: 'Check 2', icon: 'w2ui-icon-check' },
+        { type: 'break' },
+        { type: 'radio', id: 'item4', group: '1', text: 'Radio 1', icon: 'w2ui-icon-info', checked: true },
+        { type: 'radio', id: 'item5', group: '1', text: 'Radio 2', icon: 'w2ui-icon-paste' },
+        { type: 'spacer' },
+        { type: 'button', id: 'item6', text: 'Button', icon: 'w2ui-icon-cross' }
+    ],
+    onClick(event) {
+        console.log('Target: '+ event.target, event)
+        contentsPostMessage(event);
+    }
+})
+</script>
+
+
+페이지1
+<br/>
+<br/>
+
+<input type="button" id="button1" value="홈" />
+<br/>
+<br/>
+
+<script type="module">
+
+	import { navigateContents, contentsPostMessage } from "/basic.js";
 	
-	<script type="module">
+	let target;
 	
-		import { navigateContents, contentsPostMessage } from "/basic.js";
-		
-		let target;
-		
-		
-		target = document.getElementById("button1");
-		target.addEventListener(
-			"click", 
-			(e) => 
-				{
-					navigateContents("/index.html");
-				}
-		);
 	
-	</script>
+	target = document.getElementById("button1");
+	target.addEventListener(
+		"click", 
+		(e) => 
+			{
+				navigateContents("/index.html");
+			}
+	);
+
+</script>
 
 
 </body>

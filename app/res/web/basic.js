@@ -1,6 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-function objectStringify(object, depth=0, max_depth=1) 
+function objectStringify(object, depth=0, max_depth=2) 
 {
 	// change max_depth to see more levels, for a touch event, 2 is good
 
@@ -34,6 +34,9 @@ function objectStringify(object, depth=0, max_depth=1)
 
 		obj[key] = value;
 	}
+	
+	
+	return depth ? obj: JSON.stringify(obj);
 }
 
 function navigateContents(urn)
@@ -43,7 +46,7 @@ function navigateContents(urn)
 
 function contentsPostMessage(o)
 {
-	console.log("contentsPostMessage(): "+ o.target, o);
+	//console.log("contentsPostMessage(): "+ o.target, o);
 	
 	
 	
@@ -52,8 +55,17 @@ function contentsPostMessage(o)
 	
 	if (v != undefined)
 	{
-		console.log("contentsPostMessage(): objectStringify() = " + v);
-	
+		/*
+		let s;
+		
+		
+		s = v.replaceAll("\\\"", "\"");
+		alert(s);
+		console.log("contentsPostMessage(): objectStringify() = " + s);
+		
+		
+		window.chrome.webview.postMessage(s);
+		*/
 		window.chrome.webview.postMessage(v);
 	}
 	else

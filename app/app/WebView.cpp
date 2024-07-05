@@ -260,12 +260,12 @@ void WebView::registerContentsMap(void)
 	//------------------------------------------------------------------------
 	std::vector<std::wstring> resourceCollection
 	{
-		L"/w2ui-2.0/w2ui-2.0.css",
-		L"/w2ui-2.0/w2ui-2.0.js",
-		L"/w2ui-2.0/w2ui-2.0.es6.js",
-		L"/w2ui-2.0/w2ui-2.0.es6.min.js",
-		L"/w2ui-2.0/w2ui-2.0.min.css",
-		L"/w2ui-2.0/w2ui-2.0.min.js",
+		L"/w2ui/master/dist/w2ui.css",
+		L"/w2ui/master/dist/w2ui.js",
+		L"/w2ui/master/dist/w2ui.es6.js",
+		L"/w2ui/master/dist/w2ui.es6.min.js",
+		L"/w2ui/master/dist/w2ui.min.css",
+		L"/w2ui/master/dist/w2ui.min.js",
 		L"/index.html",
 		L"/basic.css",
 		L"/basic.js",
@@ -688,7 +688,7 @@ HRESULT WebView::ContentsWebView_setupWebMessageReceived(void)
 				}
 
 
-#if 0
+#if 1
 				//-----------------------------------------------------------------------
 				wil::unique_cotaskmem_string ucsWebMessage;
 
