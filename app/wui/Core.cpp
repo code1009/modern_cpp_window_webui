@@ -28,15 +28,24 @@ namespace wui
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-/*
-#define WUI_WIDE_STRING_2(x) L##x
-#define WUI_WIDE_STRING_1(x) WUI_WIDE_STRING_2(x)
-#define WUI_FILEW     WUI_WIDE_STRING_1(__FILE__)
-#define WUI_FUNCTIONW WUI_WIDE_STRING_1(__FUNCTION__)
+static std::wstring get_file_of_file_path(std::wstring file_path)
+{
+	std::wstring result;
 
-#define WUI_DEBUG_TRACE(message) \
-	wui::trace((message),WUI_FILEW,__LINE__,WUI_FUNCTIONW)
-*/
+	std::wstring::size_type index;
+
+
+	index = file_path.find_last_of(L"\\/");
+	if (std::wstring::npos == index)
+	{
+		return result;
+	}
+
+
+	result = file_path.substr(index + 1);
+
+	return result;
+}
 
 //===========================================================================
 void trace(const std::wstring& message,
@@ -73,6 +82,7 @@ void trace(const std::wstring& message,
 
 
 	//-------------------------------------------------------------------------
+#if 0
 	oss.width(4);
 	oss.fill(L'0');
 	oss.setf(std::ios::dec | std::ios::right, std::ios::basefield | std::ios::adjustfield);
@@ -95,6 +105,7 @@ void trace(const std::wstring& message,
 
 	//-------------------------------------------------------------------------
 	oss << L" ";
+#endif
 
 
 	//-------------------------------------------------------------------------
@@ -130,7 +141,7 @@ void trace(const std::wstring& message,
 	oss << message;
 
 	oss << L" (";
-	oss << std::uppercase << file;
+	oss << get_file_of_file_path(file);
 	oss << L":";
 	oss << line;
 	oss << L" ";

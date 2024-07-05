@@ -1,43 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-class MyCanvas
-{
-	_test; // public _ 그냥 붙인거
-	#documentElement; // private
-	#ctx;
-
-	constructor(de) 
-	{
-		this._test = 0;
-
-		this.#documentElement = de;
-		this.#ctx = this.#documentElement.getContext("2d");
-
-		this.#ctx.fillStyle = "white";
-		this.#ctx.fillRect(0, 0, this.#documentElement.width, this.#documentElement.height);
-	}
-
-	draw() 
-	{
-		this.#ctx.beginPath();
-		this.#ctx.arc(95, 50, 40, 0, 2 * Math.PI);
-		this.#ctx.stroke();
-	}
-
-	draw2() 
-	{
-		this.#ctx.moveTo(0, 0);
-		this.#ctx.lineTo(200, 100);
-		this.#ctx.stroke();
-	}
-}
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
 class CPPMessageHandler
 {
 	_value;
@@ -52,6 +14,7 @@ class CPPMessageHandler
 		const body = document.querySelector("body");
 
 		var html;
+		
 
 		html = "<div>";
 		html += "<pre>{";
@@ -62,7 +25,7 @@ class CPPMessageHandler
 
 		body.insertAdjacentHTML("beforeEnd", html);
 	}
-}
+};
 
 
 
@@ -123,11 +86,17 @@ function uiSetting()
 
 
 
+
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-let _myCanvas;
 let _cppMessageHandler;
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
 function coreEntry() 
 {
 	//-----------------------------------------------------------------------
@@ -135,72 +104,7 @@ function coreEntry()
 
 
 	//-----------------------------------------------------------------------
-	var myCanvasDocElement = document.getElementById("myCanvas");
-
-	_myCanvas = new MyCanvas(myCanvasDocElement);
-	_myCanvas.draw();
-
-	//-----------------------------------------------------------------------
 	_cppMessageHandler = new CPPMessageHandler();
-
-
-	//-----------------------------------------------------------------------
-	var button1 = document.getElementById("button1");
-	var button2 = document.getElementById("button2");
-	var button3 = document.getElementById("button3");
-	var button4 = document.getElementById("button4");
-	var button5 = document.getElementById("button5");
-
-
-	button1.addEventListener(
-		"click", 
-		function() 
-		{
-			alert("Hello world");
-		}
-	);
-
-	button2.addEventListener(
-		"click", 
-		function() 
-		{
-			_myCanvas.draw2();
-		}
-	);
-
-	button3.addEventListener(
-		"click", 
-		function() 
-		{
-			window.chrome.webview.postMessage("javascript-message");
-		}
-	);
-
-	button4.addEventListener(
-		"click", 
-		function() 
-		{
-			let jsonMessage = 
-			{
-				id: "command",
-				args: 
-				{
-					from: 1,
-					count: 100
-				}
-			};
-			
-			window.chrome.webview.postMessage(jsonMessage);
-		}
-	);
-
-	button5.addEventListener(
-		"click", 
-		function() 
-		{
-		}
-	);
-
 
 	//-----------------------------------------------------------------------
 	window.chrome.webview.addEventListener(

@@ -258,15 +258,24 @@ std::wstring WebView::parseContentsURN(const std::wstring& uri) const
 void WebView::registerContentsMap(void)
 {
 	//------------------------------------------------------------------------
-	const wchar_t* resourceCollection[] =
+	std::vector<std::wstring> resourceCollection
 	{
+		L"/w2ui-2.0/w2ui-2.0.css",
+		L"/w2ui-2.0/w2ui-2.0.js",
+		L"/w2ui-2.0/w2ui-2.0.es6.js",
+		L"/w2ui-2.0/w2ui-2.0.es6.min.js",
+		L"/w2ui-2.0/w2ui-2.0.min.css",
+		L"/w2ui-2.0/w2ui-2.0.min.js",
+		L"/index.html",
+		L"/basic.css",
+		L"/basic.js",
+		L"/onload.js",
 		L"/page0/index.html",
-		L"/page0/basic.js",
-		L"/page0/basic.css"
+		L"/page1/index.html"
 	};
 
 
-	for (auto res : resourceCollection)
+	for (std::wstring res : resourceCollection)
 	{
 		_ContentsMap.registerWebContents(res, std::make_shared<WebContentsResourceStream>(res));
 	}
@@ -297,8 +306,12 @@ void WebView::registerContentsMap(void)
 
 
 	//------------------------------------------------------------------------
-	_StartURI = getContentsURI(L"/page0/index.html");
+	_StartURI = getContentsURI(L"/index.html");
 }
+
+
+//===========================================================================
+#pragma region webview2
 
 //===========================================================================
 void WebView::createWebView(void)
@@ -675,7 +688,7 @@ HRESULT WebView::ContentsWebView_setupWebMessageReceived(void)
 				}
 
 
-#if 1
+#if 0
 				//-----------------------------------------------------------------------
 				wil::unique_cotaskmem_string ucsWebMessage;
 
@@ -751,6 +764,11 @@ void WebView::ContentsWebView_onWebMessage(const std::wstring& urn, const std::w
 	//------------------------------------------------------------------------
 	WUI_TRACE(urn);
 	WUI_TRACE(webMessage);
+	
+	if (webMessage == L"undefined")
+	{
+		return;
+	}
 
 
 	//------------------------------------------------------------------------
@@ -853,6 +871,34 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 		Callback<ICoreWebView2NavigationStartingEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args) -> HRESULT
 			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				wil::unique_cotaskmem_string ucsUri;
+
+
+				hr = args->get_Uri(&ucsUri);
+				RETURN_IF_FAILED(hr);
+
+
+				//-----------------------------------------------------------------------
+				std::wstring uri(ucsUri.get());
+				WUI_TRACE(uri);
+
+
+				//-----------------------------------------------------------------------
+				BOOL cancel = FALSE;
+
+
+				hr = args->get_Cancel(&cancel);
+				RETURN_IF_FAILED(hr);
+
+
+				//hr = args->put_Cancel(cancel);
+				//RETURN_IF_FAILED(hr);
+
 
 				return S_OK;
 			}
@@ -955,7 +1001,9 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 				//-----------------------------------------------------------------------
 				std::wstring jsonArgs(ucsJsonArgs.get());
-				WUI_TRACE(jsonArgs);
+				//WUI_TRACE(jsonArgs);
+				wui::debugPrintln(L"Log.entryAdded: ");
+				wui::debugPrintln(jsonArgs);
 
 
 				return S_OK;
@@ -991,7 +1039,9 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 				//-----------------------------------------------------------------------
 				std::wstring jsonArgs(ucsJsonArgs.get());
-				WUI_TRACE(jsonArgs);
+				//WUI_TRACE(jsonArgs);
+				wui::debugPrintln(L"Runtime.consoleAPICalled: ");
+				wui::debugPrintln(jsonArgs);
 
 
 				return S_OK;
@@ -1024,7 +1074,9 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 				//-----------------------------------------------------------------------
 				std::wstring jsonArgs(ucsJsonArgs.get());
-				WUI_TRACE(jsonArgs);
+				//WUI_TRACE(jsonArgs);
+				wui::debugPrintln(L"Runtime.exceptionThrown: ");
+				wui::debugPrintln(jsonArgs);
 
 
 				return S_OK;
@@ -1059,6 +1111,9 @@ void WebView::navigateContents(const std::wstring& urn)
 	uri = getContentsHost() + urn;
 	navigate(uri);
 }
+
+//===========================================================================
+#pragma endregion
 
 //===========================================================================
 void WebView::postCppMessage0ToContentsWebView(void)
