@@ -252,6 +252,16 @@ std::wstring WebView::parseContentsURN(const std::wstring& uri) const
 		urn = uri.substr(host.size());
 	}
 
+
+	auto pos = urn.find_first_of(L'?');
+
+
+	if (pos != std::string::npos)
+	{
+		return urn.substr(0, pos);
+	}
+
+
 	return urn;
 }
 
@@ -270,6 +280,7 @@ void WebView::registerContentsMap(void)
 		L"/basic.css",
 		L"/basic.js",
 		L"/onload.js",
+		L"/cppmsghandler.js",
 		L"/page0/index.html",
 		L"/page1/index.html"
 	};
@@ -287,6 +298,7 @@ void WebView::registerContentsMap(void)
 	std::ostringstream oss;
 
 
+	//------------------------------------------------------------------------
 	oss << "{";
 
 	oss << "\"" << "id" << "\"";
@@ -303,6 +315,42 @@ void WebView::registerContentsMap(void)
 
 
 	_ContentsMap.registerWebContents(L"/test.json", std::make_shared<WebContentsUTF8StringStream>(oss.str()));
+
+
+	//------------------------------------------------------------------------
+	oss << "{";
+
+	oss << "\"" << "fname" << "\"";
+	oss << ":";
+	oss << "\"" << "code1009" << "\"";
+
+	oss << ",";
+
+	oss << "\"" << "lname" << "\"";
+	oss << ":";
+	oss << "\"" << "한글" << "\"";
+
+	oss << ",";
+
+	oss << "\"" << "sdate" << "\"";
+	oss << ":";
+	oss << "\"" << "1446-10-09" << "\"";
+
+	oss << ",";
+
+	oss << "\"" << "random" << "\"";
+	oss << ":";
+	oss << "\"" << "세종대왕" << "\"";
+
+	oss << "}";
+
+
+	_ContentsMap.registerWebContents(L"/page1/list0.json", std::make_shared<WebContentsUTF8StringStream>(oss.str()));
+
+
+	//------------------------------------------------------------------------
+	oss.str("");
+	oss.clear();
 
 
 	//------------------------------------------------------------------------
@@ -787,12 +835,57 @@ void WebView::ContentsWebView_onWebMessage(const std::wstring& urn, const std::w
 
 
 	//------------------------------------------------------------------------
-	std::wstring type = jsonObj.at(L"type").as_string();
-	std::wstring target = jsonObj.at(L"target").as_string();
-	std::wstring message = target + L" : " + type;
+	web::json::value jsonType;
+	web::json::value jsonTarget;
 
 
-	::MessageBoxW(getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
+	jsonType = jsonObj.at(L"type");
+	jsonTarget = jsonObj.at(L"target");
+
+
+	//------------------------------------------------------------------------
+	std::wstring type;
+	std::wstring target;
+
+
+	switch (jsonType.type())
+	{
+	case web::json::value::Number:
+	case web::json::value::Boolean:
+	case web::json::value::String:
+		type = jsonType.as_string();
+		break;
+
+	default:
+		type = L"json-type?";
+		break;
+	}
+
+	switch (jsonTarget.type())
+	{
+	case web::json::value::Number:
+	case web::json::value::Boolean:
+	case web::json::value::String:
+		target = jsonTarget.as_string();
+		break;
+
+	default:
+		type = L"json-type?";
+		break;
+	}
+
+
+	if ((type == L"?") && (target == L"?"))
+	{
+		postCppMessage1ToContentsWebView();
+	}
+	else
+	{
+		std::wstring message = target + L" : " + type;
+
+
+		::MessageBoxW(getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
+	}
 }
 
 //===========================================================================
@@ -1141,28 +1234,29 @@ void WebView::postCppMessage0ToContentsWebView(void)
 
 void WebView::postCppMessage1ToContentsWebView(void)
 {
-	//------------------------------------------------------------------------
-	std::wstring json;
-	std::wostringstream oss;
+	static int id = 100;
+
+	int i;
 
 
-	//------------------------------------------------------------------------
-	oss << L"{";
-
-	oss << L"\"" << L"id" << L"\"";
-	oss << L":";
-	oss << L"\"" << 100 << L"\"";
-
-	oss << L",";
-
-	oss << L"\"" << L"name" << L"\"";
-	oss << L":";
-	oss << L"\"" << L"code1009" << L"\"";
-
-	oss << L"}";
+	for(i=0; i<25; i++)
+	{
+		id++;
 
 
-	ContentsWebView_postWebMessageAsJson(oss.str());
+		web::json::value jsonObj = web::json::value::parse(L"{}");
+
+		jsonObj[L"id"] = web::json::value::number(100);
+		jsonObj[L"name"] = web::json::value::string(L"C++에서 보냄");
+		jsonObj[L"no"] = web::json::value::number(id);
+
+
+		utility::stringstream_t stream;
+		jsonObj.serialize(stream);
+
+
+		ContentsWebView_postWebMessageAsJson(stream.str().c_str());
+	}
 }
 
 

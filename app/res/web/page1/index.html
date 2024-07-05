@@ -31,36 +31,213 @@ new w2toolbar({
         { type: 'button', id: 'item6', text: 'Button', icon: 'w2ui-icon-cross' }
     ],
     onClick(event) {
-        console.log('Target: '+ event.target, event)
-        contentsPostMessage(event);
+		if(event.target!="item6")
+		{
+			console.log('Target: '+ event.target, event)
+			contentsPostMessage(event);
+		}
+		else
+		{
+			navigateContents("/index.html");
+		}
     }
 })
 </script>
 
+
+
+<div id="grid" style="width: 100%; height: 500px"></div>
+<br>
+<span id="log"></span>
 
 페이지1
 <br/>
 <br/>
 
 <input type="button" id="button1" value="홈" />
+<input type="button" id="button2" value="테스트" />
 <br/>
 <br/>
+
 
 <script type="module">
 
-	import { navigateContents, contentsPostMessage } from "/basic.js";
+//---------------------------------------------------------------------------
+import { w2grid, query } from '/w2ui/master/dist/w2ui.es6.min.js'
+import { navigateContents, contentsPostMessage } from "/basic.js";
+import { cppMsgHandler } from "/cppmsghandler.js";
+
+//---------------------------------------------------------------------------
+let grid = new w2grid({
+    name: 'grid',
+    box: '#grid',
+    show: {
+        lineNumbers: true,
+        footer: true
+    },
+//    url: '/page1/list0.json',
+//    method: 'GET', // need this to avoid 412 error on Safari
+    limit: 50,
+    autoLoad: false,
+    columns: [
+        { field: 'fname', text: 'First Name', size: '200px' },
+        { field: 'lname', text: 'Last Name', size: '200px' },
+        { field: 'sdate', text: 'Start Date', size: '140px' },
+        { field: 'random', text: 'Random', size: '100%' },
+    ],
+})
+
+/*
+let timeout
+
+window.live = function(time) {
+    let stats = []
+    clearInterval(timeout)
+    if (time) {
+        timeout = setInterval(() => {
+            grid.records.forEach(rec => {
+                let rnd = Math.floor(Math.random() * 10000) / 10000
+                if (rec._fname == null) {
+                    rec._fname = rec.fname
+                    rec._lname = rec.lname
+                    rec._sdate = rec.sdate
+                }
+                if (rnd > 0.5) {
+                    rec.w2ui = { style: 'color: ' + (Math.random() > 0.7 ? 'red' : 'green') }
+                } else {
+                    rec.w2ui = { style: '' }
+                }
+                rec.fname = rec._fname + ' ' + rnd
+                rec.lname = rec._lname + ' ' + rnd
+                rec.sdate = rec._sdate + ' ' + rnd
+                rec.random = 'Rand: ' + rnd
+            })
+            if (stats.length > (1000 / time)) {
+                // calculate average time
+                let avg = Math.floor(Math.round(stats.reduce((prev, curr) => prev + curr) / stats.length * 10)) / 10
+                query('#log').html('Average update time: ' + avg + ' ms')
+                stats = []
+            }
+            stats.push(grid.update())
+        }, time)
+    }
+}
+*/
+
+grid.add( {recid:0, fname:'{a}', lname:'{b}', sdate:'{c}', random:'{d}' } );
+
+function add_rec1(n, a,b,c,d)
+{
+/*
+	let rnd = Math.floor(Math.random() * 10000) / 10000;
+
+	let rec = new ;
+
+	rec.fname  = "rec.fname " + ' ' + rnd;
+	rec.lname  = "rec.lname " + ' ' + rnd;
+	rec.sdate  = "rec.sdate " + ' ' + rnd;
+	rec.random = "rec.random" + ' ' + rnd;
+*/
+
+	//grid.add( { recid:'${n}', fname:'${a}', lname:'${b}', sdate:'${c}', random:'${d}' } );
+	grid.add( { recid:n, fname:a, lname:b, sdate:c, random:d } );
+}
+
+let _cursor = 0;
+let _count = 0;
+
+function add_rec2(n, a,b,c,d)
+{
+	let rnd = Math.floor(Math.random() * 10000) / 10000;
 	
-	let target;
+	var rec =
+	{
+		"recid" :n,
+		"fname" :a+ ' ' + rnd,
+		"lname" :b+ ' ' + rnd,
+		"sdate" :c+ ' ' + rnd,
+		"random":d+ ' ' + rnd
+	};
 	
+	if (_count<50)
+	{
+		grid.add( rec );
+		_count++;
+	}
+	else
+	{
+		grid.records[_cursor].recid  =rec.recid ;
+		grid.records[_cursor].fname  =rec.fname ;
+		grid.records[_cursor].lname  =rec.lname ;
+		grid.records[_cursor].sdate  =rec.sdate ;
+		grid.records[_cursor].random =rec.random;
+		
+		_cursor = (_cursor + 1) % 50;
+	}
 	
-	target = document.getElementById("button1");
-	target.addEventListener(
-		"click", 
-		(e) => 
+	grid.update();
+}
+
+
+add_rec1(1, "가나다라1","가나다라2","가나다라3","가나다라4");
+add_rec2(2, "가나다라1","가나다라2","가나다라3","가나다라4");
+
+
+//---------------------------------------------------------------------------
+let target;
+
+
+target = document.getElementById("button1");
+target.addEventListener(
+	"click", 
+	(e) => 
+		{
+			navigateContents("/index.html");
+		}
+);
+
+target = document.getElementById("button2");
+target.addEventListener(
+	"click", 
+	(e) => 
+		{
+			var msg =
 			{
-				navigateContents("/index.html");
+				"type"   : "?",
+				"target" : "?"
+			};
+			
+			contentsPostMessage(msg);
+		}
+);
+
+
+
+//---------------------------------------------------------------------------
+/*
+let _cppMsgHandler;
+
+_cppMsgHandler = new cppMsgHandler();
+*/
+window.chrome.webview.addEventListener(
+	"message", 
+	arg => 
+	{
+		if (("id" in arg.data) && ("name" in arg.data))
+		{
+			var id = arg.data.id;
+			var name = arg.data.name;
+
+
+			switch(id)
+			{
+			case 100:
+				add_rec2(arg.data.no, name, name, name, name);
+				break;
 			}
-	);
+		}
+	}
+);
 
 </script>
 
