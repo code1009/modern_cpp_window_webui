@@ -46,6 +46,13 @@ public:
 	virtual ~WebContentsResourceStream();
 
 public:
+	WebContentsResourceStream(const WebContentsResourceStream&) = delete;
+	WebContentsResourceStream& operator=(const WebContentsResourceStream&) = delete;
+
+	WebContentsResourceStream(WebContentsResourceStream&&) = delete;
+	WebContentsResourceStream& operator=(WebContentsResourceStream&&) = delete;
+
+public:
 	virtual IStream* getStream(void) const override;
 
 private:
