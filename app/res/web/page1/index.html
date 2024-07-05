@@ -143,8 +143,7 @@ function add_rec1(n, a,b,c,d)
 	grid.add( { recid:n, fname:a, lname:b, sdate:c, random:d } );
 }
 
-let _cursor = 0;
-let _count = 0;
+let _count = 2;
 
 function add_rec2(n, a,b,c,d)
 {
@@ -166,13 +165,21 @@ function add_rec2(n, a,b,c,d)
 	}
 	else
 	{
-		grid.records[_cursor].recid  =rec.recid ;
-		grid.records[_cursor].fname  =rec.fname ;
-		grid.records[_cursor].lname  =rec.lname ;
-		grid.records[_cursor].sdate  =rec.sdate ;
-		grid.records[_cursor].random =rec.random;
+		var i;
 		
-		_cursor = (_cursor + 1) % 50;
+		for(i=0; i<_count-1; i++)
+		{
+			grid.records[i].recid  =grid.records[i+1].recid  ;
+			grid.records[i].fname  =grid.records[i+1].fname  ;
+			grid.records[i].lname  =grid.records[i+1].lname  ;
+			grid.records[i].sdate  =grid.records[i+1].sdate  ;
+			grid.records[i].random =grid.records[i+1].random ;
+		}
+		grid.records[i].recid  =rec.recid ;
+		grid.records[i].fname  =rec.fname ;
+		grid.records[i].lname  =rec.lname ;
+		grid.records[i].sdate  =rec.sdate ;
+		grid.records[i].random =rec.random;
 	}
 	
 	grid.update();
