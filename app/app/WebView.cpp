@@ -231,7 +231,17 @@ std::wstring WebView::getContentsHost(void) const
 	return host;
 }
 
-std::wstring WebView::getContentsURN(const std::wstring& uri) const
+std::wstring WebView::getContentsURI(const std::wstring& urn) const
+{
+	std::wstring uri;
+
+
+	uri = getContentsHost() + urn;
+
+	return uri;
+}
+
+std::wstring WebView::parseContentsURN(const std::wstring& uri) const
 {
 	std::wstring host = getContentsHost();
 	std::wstring urn;
@@ -247,9 +257,20 @@ std::wstring WebView::getContentsURN(const std::wstring& uri) const
 
 void WebView::registerContentsMap(void)
 {
-	_ContentsMap.registerWebContents(L"/index.html", std::make_shared<WebContentsResourceStream>(L"index.html"));
-	_ContentsMap.registerWebContents(L"/basic.js", std::make_shared<WebContentsResourceStream>(L"basic.js"));
-	_ContentsMap.registerWebContents(L"/basic.css", std::make_shared<WebContentsResourceStream>(L"basic.css"));
+	//------------------------------------------------------------------------
+	const wchar_t* resourceCollection[] =
+	{
+		L"/page0/index.html",
+		L"/page0/basic.js",
+		L"/page0/basic.css"
+	};
+
+
+	for (auto res : resourceCollection)
+	{
+		_ContentsMap.registerWebContents(res, std::make_shared<WebContentsResourceStream>(res));
+	}
+
 	//_ContentsMap.registerWebContents(L"/favicon.ico", std::make_shared<WebContentsResourceStream>(L"favicon.ico"));
 
 
@@ -273,6 +294,10 @@ void WebView::registerContentsMap(void)
 
 
 	_ContentsMap.registerWebContents(L"/test.json", std::make_shared<WebContentsUTF8StringStream>(oss.str()));
+
+
+	//------------------------------------------------------------------------
+	_StartURI = getContentsURI(L"/page0/index.html");
 }
 
 //===========================================================================
@@ -437,8 +462,7 @@ HRESULT WebView::setupContentsWebView(void)
 
 
 	//-----------------------------------------------------------------------
-	navigateContents(L"/index.html");
-	//navigateContents(L"/test.json");
+	navigate(_StartURI);
 
 
 	return S_OK;
@@ -558,7 +582,7 @@ HRESULT WebView::ContentsWebView_setupWebResourceRequestedFilter(void)
 
 				//-----------------------------------------------------------------------
 				std::wstring uri(ucsUri.get());
-				std::wstring urn = getContentsURN(uri);
+				std::wstring urn = parseContentsURN(uri);
 
 
 				WUI_TRACE(urn);
@@ -642,7 +666,7 @@ HRESULT WebView::ContentsWebView_setupWebMessageReceived(void)
 
 				//-----------------------------------------------------------------------
 				std::wstring uri(ucsUri.get());
-				std::wstring urn = getContentsURN(uri);
+				std::wstring urn = parseContentsURN(uri);
 
 
 				if (urn.empty())

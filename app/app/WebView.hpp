@@ -19,6 +19,7 @@ class WebView : public wui::BasicWindow
 {
 public:
 	WebContentsMap _ContentsMap{};
+	std::wstring _StartURI;
 
 public:
 	wil::com_ptr<ICoreWebView2Environment> _ContentsWebViewEnvironment;
@@ -71,7 +72,8 @@ public:
 public:
 	std::wstring getContentsDataFolder(void) const;
 	std::wstring getContentsHost(void) const;
-	std::wstring getContentsURN(const std::wstring& uri) const;
+	std::wstring getContentsURI(const std::wstring& urn) const;
+	std::wstring parseContentsURN(const std::wstring& uri) const;
 
 public:
 	void createWebView(void);
