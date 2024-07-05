@@ -18,7 +18,7 @@ namespace app
 class WebView : public wui::BasicWindow
 {
 public:
-	ResourceWebContentsMap _ResourceWebContentsMap{};
+	WebContentsMap _ContentsMap{};
 
 public:
 	wil::com_ptr<ICoreWebView2Environment> _ContentsWebViewEnvironment;
@@ -76,7 +76,7 @@ public:
 public:
 	void createWebView(void);
 	void destroyWebView(void);
-	void registerResourceWebContentsMap(void);
+	void registerContentsMap(void);
 
 public:
 	HRESULT createContentsWebViewController(void);

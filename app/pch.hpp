@@ -58,5 +58,5 @@
 #include "app/AboutDialog.hpp"
 #include "app/MainFrame.hpp"
 
-#include "app/ResourceWebContents.hpp"
+#include "app/WebContents.hpp"
 #include "app/WebView.hpp"

@@ -48,13 +48,17 @@ void runAppWindow(void)
 int run(void)
 {
 	//-----------------------------------------------------------------------
-	SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+	::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 
 	//-----------------------------------------------------------------------
-	if (FAILED(CoInitialize(NULL)))
+	HRESULT hr;
+
+
+	hr = ::CoInitialize(NULL);
+	if (FAILED(hr))
 	{
-		return 0;
+		return -1;
 	}
 	
 
@@ -63,7 +67,7 @@ int run(void)
 
 	
 	//-----------------------------------------------------------------------
-	CoUninitialize();
+	::CoUninitialize();
 
 	return 0;
 }

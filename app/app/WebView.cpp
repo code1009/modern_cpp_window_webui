@@ -247,7 +247,7 @@ std::wstring WebView::getContentsURN(std::wstring uri)
 void WebView::createWebView(void)
 {	
 	//-----------------------------------------------------------------------
-	registerResourceWebContentsMap();
+	registerContentsMap();
 
 
 	//-----------------------------------------------------------------------
@@ -287,13 +287,12 @@ void WebView::destroyWebView(void)
 	_ContentsWebViewEnvironment->Release();
 }
 
-void WebView::registerResourceWebContentsMap(void)
+void WebView::registerContentsMap(void)
 {
-	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
-	_ResourceWebContentsMap.registerResourceWebContents(L"/index.html", L"Content-Type: text/html", L"index.html");
-	_ResourceWebContentsMap.registerResourceWebContents(L"/basic.js", L"Content-Type: text/javascript", L"basic.js");
-	_ResourceWebContentsMap.registerResourceWebContents(L"/basic.css", L"Content-Type: text/css", L"basic.css");
-	//_ResourceWebContentsMap.registerResourceWebContents(L"/favicon.ico", L"Content-Type: image/x-icon", L"favicon.ico");
+	_ContentsMap.registerWebContents(L"/index.html", std::make_shared<WebContentsResourceStream>(L"index.html"));
+	_ContentsMap.registerWebContents(L"/basic.js", std::make_shared<WebContentsResourceStream>(L"basic.js"));
+	_ContentsMap.registerWebContents(L"/basic.css", std::make_shared<WebContentsResourceStream>(L"basic.css"));
+	//_ContentsMap.registerWebContents(L"/favicon.ico", std::make_shared<WebContentsResourceStream>(L"favicon.ico"));
 }
 
 HRESULT WebView::createContentsWebViewController(void)
@@ -550,7 +549,7 @@ HRESULT WebView::ContentsWebView_setupWebResourceRequestedFilter(void)
 
 
 				//-----------------------------------------------------------------------
-				ResourceWebContents* o = _ResourceWebContentsMap.find(urn);
+				WebContents* o = _ContentsMap.find(urn);
 
 
 				//-----------------------------------------------------------------------
@@ -568,12 +567,22 @@ HRESULT WebView::ContentsWebView_setupWebResourceRequestedFilter(void)
 
 				if (nullptr == o)
 				{
-					hr = environment->CreateWebResourceResponse(nullptr, 404, L"Not found", nullptr, &response);
+					hr = environment->CreateWebResourceResponse(
+						nullptr, 
+						404, L"Not found", 
+						nullptr, 
+						&response
+					);
 					RETURN_IF_FAILED(hr);
 				}
 				else
 				{
-					hr = environment->CreateWebResourceResponse(o->_pStream, 200, L"OK", o->_WebContentsType.c_str(), &response);
+					hr = environment->CreateWebResourceResponse(
+						o->getStream(), 
+						200, L"OK", 
+						o->getHeaders().c_str(), 
+						&response
+					);
 					RETURN_IF_FAILED(hr);
 				}
 

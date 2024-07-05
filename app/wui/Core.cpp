@@ -64,12 +64,12 @@ void trace(const std::wstring& message,
 
 
 	//-------------------------------------------------------------------------
-	oss << "0x" << std::uppercase << std::setfill(L'0') << std::setw(8) << std::hex;
+	oss << L"0x" << std::uppercase << std::setfill(L'0') << std::setw(8) << std::hex;
 	oss << threadId;
 
 
 	//-------------------------------------------------------------------------
-	oss << " ";
+	oss << L" ";
 
 
 	//-------------------------------------------------------------------------
@@ -78,14 +78,14 @@ void trace(const std::wstring& message,
 	oss.setf(std::ios::dec | std::ios::right, std::ios::basefield | std::ios::adjustfield);
 	oss << st.wYear;
 
-	oss << "-";
+	oss << L"-";
 
 	oss.width(2);
 	oss.fill(L'0');
 	oss.setf(std::ios::dec | std::ios::right, std::ios::basefield | std::ios::adjustfield);
 	oss << st.wMonth;
 
-	oss << "-";
+	oss << L"-";
 
 	oss.width(2);
 	oss.fill(L'0');
@@ -94,7 +94,7 @@ void trace(const std::wstring& message,
 
 
 	//-------------------------------------------------------------------------
-	oss << " ";
+	oss << L" ";
 
 
 	//-------------------------------------------------------------------------
@@ -103,21 +103,21 @@ void trace(const std::wstring& message,
 	oss.setf(std::ios::dec | std::ios::right, std::ios::basefield | std::ios::adjustfield);
 	oss << st.wHour;
 
-	oss << ":";
+	oss << L":";
 
 	oss.width(2);
 	oss.fill(L'0');
 	oss.setf(std::ios::dec | std::ios::right, std::ios::basefield | std::ios::adjustfield);
 	oss << st.wMinute;
 
-	oss << ":";
+	oss << L":";
 
 	oss.width(2);
 	oss.fill(L'0');
 	oss.setf(std::ios::dec | std::ios::right, std::ios::basefield | std::ios::adjustfield);
 	oss << st.wSecond;
 
-	oss << ".";
+	oss << L".";
 
 	oss.width(3);
 	oss.fill(L'0');
@@ -126,16 +126,16 @@ void trace(const std::wstring& message,
 
 
 	//-------------------------------------------------------------------------
-	oss << " ";
+	oss << L" ";
 	oss << message;
 
-	oss << " (";
+	oss << L" (";
 	oss << std::uppercase << file;
-	oss << ":";
+	oss << L":";
 	oss << line;
-	oss << " ";
+	oss << L" ";
 	oss << func;
-	oss << ")";
+	oss << L")";
 
 	oss << std::endl;
 

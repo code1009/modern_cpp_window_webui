@@ -98,7 +98,7 @@
     <ClInclude Include="app\pch.hpp">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\ResourceWebContents.hpp">
+    <ClInclude Include="app\WebContents.hpp">
       <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="app\WebView.hpp">
@@ -124,7 +124,7 @@
     <ClCompile Include="app\MainFrame.cpp">
       <Filter>app</Filter>
     </ClCompile>
-    <ClCompile Include="app\ResourceWebContents.cpp">
+    <ClCompile Include="app\WebContents.cpp">
       <Filter>app</Filter>
     </ClCompile>
     <ClCompile Include="app\WebView.cpp">
