@@ -24,7 +24,17 @@
     <None Include="res\app.aps" />
     <None Include="res\web\basic.css" />
     <None Include="res\web\basic.js" />
+    <None Include="res\web\cppmsghandler.js" />
     <None Include="res\web\index.html" />
+    <None Include="res\web\onload.js" />
+    <None Include="res\web\page0\index.html" />
+    <None Include="res\web\page1\index.html" />
+    <None Include="res\web\w2ui\master\dist\w2ui.css" />
+    <None Include="res\web\w2ui\master\dist\w2ui.es6.js" />
+    <None Include="res\web\w2ui\master\dist\w2ui.es6.min.js" />
+    <None Include="res\web\w2ui\master\dist\w2ui.js" />
+    <None Include="res\web\w2ui\master\dist\w2ui.min.css" />
+    <None Include="res\web\w2ui\master\dist\w2ui.min.js" />
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
