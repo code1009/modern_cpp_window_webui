@@ -22,13 +22,13 @@
     <Filter Include="doc">
       <UniqueIdentifier>{16486b17-e945-48f0-a906-1ce7abee8094}</UniqueIdentifier>
     </Filter>
-    <Filter Include="res\web\NewFilter1">
+    <Filter Include="res\web\page0">
       <UniqueIdentifier>{f9e3ce88-d257-4dc2-b396-110adbfc1c67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="res\web\NewFilter2">
+    <Filter Include="res\web\page1">
       <UniqueIdentifier>{bb048f77-955f-4411-8f1f-f2085b6c7ea0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="res\web\NewFilter3">
+    <Filter Include="res\web\w2ui">
       <UniqueIdentifier>{0dacdd90-e099-4e20-b49c-2494ff17393c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -55,28 +55,28 @@
       <Filter>doc</Filter>
     </None>
     <None Include="res\web\page0\index.html">
-      <Filter>res\web\NewFilter1</Filter>
+      <Filter>res\web\page0</Filter>
     </None>
     <None Include="res\web\page1\index.html">
-      <Filter>res\web\NewFilter2</Filter>
+      <Filter>res\web\page1</Filter>
     </None>
     <None Include="res\web\w2ui\master\dist\w2ui.css">
-      <Filter>res\web\NewFilter3</Filter>
+      <Filter>res\web\w2ui</Filter>
     </None>
     <None Include="res\web\w2ui\master\dist\w2ui.es6.js">
-      <Filter>res\web\NewFilter3</Filter>
+      <Filter>res\web\w2ui</Filter>
     </None>
     <None Include="res\web\w2ui\master\dist\w2ui.es6.min.js">
-      <Filter>res\web\NewFilter3</Filter>
+      <Filter>res\web\w2ui</Filter>
     </None>
     <None Include="res\web\w2ui\master\dist\w2ui.js">
-      <Filter>res\web\NewFilter3</Filter>
+      <Filter>res\web\w2ui</Filter>
     </None>
     <None Include="res\web\w2ui\master\dist\w2ui.min.css">
-      <Filter>res\web\NewFilter3</Filter>
+      <Filter>res\web\w2ui</Filter>
     </None>
     <None Include="res\web\w2ui\master\dist\w2ui.min.js">
-      <Filter>res\web\NewFilter3</Filter>
+      <Filter>res\web\w2ui</Filter>
     </None>
     <None Include="res\web\cppmsghandler.js">
       <Filter>res\web</Filter>
