@@ -13,7 +13,7 @@ Microsoft Edge WebView2 control을 이용해서 webui를 winapi환경에서 구�
 - 웹페이지(.js)와 native application(C++)이 json으로 메시지 교환 함.  
 - w2ui를 이용하면 꽤 쓸만할 것 같음.  
 
-- 
+
 ## 참고 url
 - https://github.com/MicrosoftEdge/WebView2Browser  
 - https://w2ui.com/web/  
