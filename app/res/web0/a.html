@@ -44,8 +44,8 @@ class Table
 		}
 		else
 		{
-			var i;
-			var count;
+			let i;
+			let count;
 			
 			
 			count = this._Array.length;
@@ -75,15 +75,17 @@ class Table
 		this._Array.forEach(
 			rec => 
 			{
-				var html;
+				let html;
 				
 				
 				html = "<p>";
+				
 				html += "no=";
 				html += rec._no;
 				html += " ";
 				html += "name=";
 				html += rec._name;
+				
 				html += "</p>";
 			
 				target.insertAdjacentHTML("beforeEnd", html);
@@ -92,13 +94,13 @@ class Table
 	}
 }
 
-let table = new Table();
+let _table = new Table();
 
-table.add(new Record(1, "이름1"));
-table.add(new Record(2, "이름2"));
-table.add(new Record(3, "이름3"));
-table.add(new Record(4, "이름4"));
-table.add(new Record(5, "이름5"));
+_table.add(new Record(1, "이름1"));
+_table.add(new Record(2, "이름2"));
+_table.add(new Record(3, "이름3"));
+_table.add(new Record(4, "이름4"));
+_table.add(new Record(5, "이름5"));
 
 //table.print();
 //table.print();
