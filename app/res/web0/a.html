@@ -5,6 +5,14 @@
 <meta charset="utf-8">
 <title>code1009</title>
 
+
+<style>
+tr {
+  border-bottom: 3px solid #ddd;
+}
+</style>
+
+
 </head>
 <body>
 
@@ -14,7 +22,8 @@
 
 <script type="module">
 
-
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
 class Record
 {
 	_no;
@@ -27,18 +36,30 @@ class Record
 	}
 }
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
 class Table
 {
 	_Array;
-
+	_MaxVisibleCount;
+	_TagElement;
+	_TagTable;
+	
 	constructor() 
 	{
 		this._Array = new Array();
+		this._MaxVisibleCount = 3;
+		this._TagElement = document.getElementById("grid");
+		this.putTableHtml();
 	}
 	
-	add(rec)
+	addRecord(rec)
 	{
-		if (this._Array.length<3)
+		if (this._Array.length<this._MaxVisibleCount)
 		{
 			this._Array.push(rec);
 		}
@@ -63,85 +84,110 @@ class Table
 		this.print();
 	}
 
-	getHTMLodd(rec)
+	putTableHtml()
 	{
 		let html;
 		
 		
-		html = "<p style=\"background-color:tomato;\">";
-
-		html += "no=";
-		html += rec._no;
-		html += " ";
-		html += "name=";
-		html += rec._name;
-		
-		html += "</p>";
+		html = "<table id=\"_MyTable\" width=\"100%\" >";
+		html += "<tr>";
+		html += "<th>no</th>";
+		html += "<th>name</th>";
+		html += "</tr>";
+		html += "</table>";
 		
 		
-		return html;
-	}
-
-
-	getHTMLeven(rec)
-	{
-		let html;
+		this._TagElement.insertAdjacentHTML("beforeEnd", html);
 		
-		
-		html = "<p style=\"background-color:powderblue;\">";
-
-		html += "no=";
-		html += rec._no;
-		html += " ";
-		html += "name=";
-		html += rec._name;
-		
-		html += "</p>";
-		
-		
-		return html;
+		this._TagTable = document.getElementById('_MyTable');
 	}
 	
-	getHTML(rec)
+	putRecordOddHtml(rec)
+	{
+		let html;
+
+
+		html = "<tr>";
+		html += "<td >"
+		html += rec._no;
+		html += "</td>";
+		html += "<td>"
+		html += rec._name;
+		html += "</td>";
+		html += "</tr>";
+
+
+		this._TagTable.insertAdjacentHTML("beforeEnd", html);
+	}
+
+	putRecordEvenHtml(rec)
+	{
+		let html;
+
+
+		html = "<tr>";
+		html += "<td >"
+		html += rec._no;
+		html += "</td>";
+		html += "<td>"
+		html += rec._name;
+		html += "</td>";
+		html += "</tr>";
+
+
+		this._TagTable.insertAdjacentHTML("beforeEnd", html);
+	}
+	
+	putRecordHtml(rec)
 	{
 		if (rec._no%2)
 		{
-			return this.getHTMLodd(rec);
+			this.putRecordOddHtml(rec);
 		}
-		
-		return this.getHTMLeven(rec);
+		else
+		{
+			this.putRecordEvenHtml(rec);
+		}
 	}
-	
+
 	print()
 	{
+		/*
 		let target;
 		
 		
 		target = document.getElementById("grid");
 		target.innerHTML = "";
+		*/
+		
+		
+		this._TagElement.innerHTML = "";
 
+
+		this.putTableHtml();
 
 		this._Array.forEach(
 			rec => 
 			{
-				let html;
-				
-				
-				html = this.getHTML(rec);
-			
-				target.insertAdjacentHTML("beforeEnd", html);
+				this.putRecordHtml(rec);
 			}
 		);
 	}
 }
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
 let _table = new Table();
 
-_table.add(new Record(1, "이름1"));
-_table.add(new Record(2, "이름2"));
-_table.add(new Record(3, "이름3"));
-_table.add(new Record(4, "이름4"));
-_table.add(new Record(5, "이름5"));
+_table.addRecord(new Record(1, "이름1"));
+_table.addRecord(new Record(2, "이름2"));
+_table.addRecord(new Record(3, "이름3"));
+_table.addRecord(new Record(4, "이름4"));
+_table.addRecord(new Record(5, "이름5"));
 
 //table.print();
 //table.print();
