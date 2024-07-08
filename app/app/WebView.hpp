@@ -101,6 +101,7 @@ public:
 public:
 	void navigate(const std::wstring& uri);
 	void navigateContents(const std::wstring& urn);
+	void executeScript(const std::wstring& script);
 };
 
 

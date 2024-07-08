@@ -306,6 +306,7 @@ void WebView::registerContentsMap(void)
 
 
 	//------------------------------------------------------------------------
+	//_StartURI = getContentsURI(L"/page1/list0.json");
 	_StartURI = getContentsURI(L"/index.html");
 }
 
@@ -903,6 +904,9 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 				if (SUCCEEDED(hr))
 				{
 					WUI_TRACE(L"navigationSucceeded");
+
+
+					//executeScript(L"alert(\"navigationSucceeded\"); var win = window.open(\"/page1/list0.json\", \"PopupWin\", \"width=500,height=600\");");
 				}
 				else
 				{
@@ -1095,6 +1099,25 @@ void WebView::navigateContents(const std::wstring& urn)
 
 	uri = getContentsHost() + urn;
 	navigate(uri);
+}
+
+void WebView::executeScript(const std::wstring& script)
+{
+	_ContentsWebView->ExecuteScript(script.c_str(),
+		Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
+			[this](HRESULT errorCode, LPCWSTR resultObjectAsJson) -> HRESULT
+			{
+				if (FAILED(errorCode))
+				{
+
+				}
+
+
+
+				return S_OK;
+			}
+		).Get()
+	);
 }
 
 //===========================================================================
