@@ -7,9 +7,41 @@
 
 
 <style>
-tr {
-  border-bottom: 3px solid #ddd;
+
+.TableComponent {
+    overflow: auto;
+    width: 100%;
 }
+
+.TableComponent table {
+    border: 1px solid #dededf;
+    height: 100%;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 1px;
+    text-align: left;
+}
+
+.TableComponent caption {
+    caption-side: top;
+    text-align: left;
+}
+
+.TableComponent th {
+    border: 1px solid #dededf;
+    background-color: #eceff1;
+    color: #000000;
+    padding: 5px;
+}
+
+.TableComponent td {
+    border: 1px solid #dededf;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 5px;
+}
+
 </style>
 
 
@@ -17,7 +49,22 @@ tr {
 <body>
 
 
-<div id="grid" style="width: 100%; height: 500px"></div>
+<table>
+
+<tr>
+<th>a</th><th>b</th><th>c</th>
+</tr>
+
+<tr>
+<td>a</td><td>b</td><td>c</td>
+</tr>
+<tr>
+<td>a</td><td>b</td><td>c</td>
+</tr>
+
+</table>
+
+<div id="myTable" class="TableComponent" ></div>
 
 
 <script type="module">
@@ -46,14 +93,14 @@ class Table
 {
 	_Array;
 	_MaxVisibleCount;
-	_TagElement;
-	_TagTable;
+	_ComponentTag;
+	_TableTag;
 	
 	constructor() 
 	{
 		this._Array = new Array();
-		this._MaxVisibleCount = 3;
-		this._TagElement = document.getElementById("grid");
+		this._MaxVisibleCount = 5;
+		this._ComponentTag = document.getElementById("myTable");
 		this.putTableHtml();
 	}
 	
@@ -81,7 +128,7 @@ class Table
 			this._Array[i]._name = rec._name ;
 		}
 		
-		this.print();
+		this.putHtml();
 	}
 
 	putTableHtml()
@@ -89,17 +136,17 @@ class Table
 		let html;
 		
 		
-		html = "<table id=\"_MyTable\" width=\"100%\" >";
+		html = "<table id=\"myTable.TableTag\" >";
 		html += "<tr>";
-		html += "<th>no</th>";
+		html += "<th width=\"100px\">no</th>";
 		html += "<th>name</th>";
 		html += "</tr>";
 		html += "</table>";
 		
 		
-		this._TagElement.insertAdjacentHTML("beforeEnd", html);
+		this._ComponentTag.insertAdjacentHTML("beforeEnd", html);
 		
-		this._TagTable = document.getElementById('_MyTable');
+		this._TableTag = document.getElementById("myTable.TableTag");
 	}
 	
 	putRecordOddHtml(rec)
@@ -117,7 +164,7 @@ class Table
 		html += "</tr>";
 
 
-		this._TagTable.insertAdjacentHTML("beforeEnd", html);
+		this._TableTag.insertAdjacentHTML("beforeEnd", html);
 	}
 
 	putRecordEvenHtml(rec)
@@ -135,7 +182,7 @@ class Table
 		html += "</tr>";
 
 
-		this._TagTable.insertAdjacentHTML("beforeEnd", html);
+		this._TableTag.insertAdjacentHTML("beforeEnd", html);
 	}
 	
 	putRecordHtml(rec)
@@ -150,18 +197,9 @@ class Table
 		}
 	}
 
-	print()
-	{
-		/*
-		let target;
-		
-		
-		target = document.getElementById("grid");
-		target.innerHTML = "";
-		*/
-		
-		
-		this._TagElement.innerHTML = "";
+	putHtml()
+	{		
+		this._ComponentTag.innerHTML = "";
 
 
 		this.putTableHtml();
@@ -188,9 +226,14 @@ _table.addRecord(new Record(2, "이름2"));
 _table.addRecord(new Record(3, "이름3"));
 _table.addRecord(new Record(4, "이름4"));
 _table.addRecord(new Record(5, "이름5"));
+_table.addRecord(new Record(6, "이름6"));
+_table.addRecord(new Record(7, "이름7"));
+_table.addRecord(new Record(8, "이름8"));
+_table.addRecord(new Record(9, "이름9"));
+_table.addRecord(new Record(10, "이름10"));
 
-//table.print();
-//table.print();
+//table.putHtml();
+//table.putHtml();
 
 </script>
 
