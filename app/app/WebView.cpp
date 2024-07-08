@@ -1,6 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 #include "pch.hpp"
+#include "JsonMessageService.hpp"
 
 
 
@@ -295,62 +296,13 @@ void WebView::registerContentsMap(void)
 
 
 	//------------------------------------------------------------------------
-	std::ostringstream oss;
+	JsonMessageService jsonMessageService(this);
+	std::wstring json;
 
 
-	//------------------------------------------------------------------------
-	oss << "{";
+	json = jsonMessageService.getMessage_page1_list0_json();
 
-	oss << "\"" << "id" << "\"";
-	oss << ":";
-	oss << "\"" << 100 << "\"";
-
-	oss << ",";
-
-	oss << "\"" << "name" << "\"";
-	oss << ":";
-	oss << "\"" << "한글" << "\"";
-
-	oss << "}";
-
-
-	_ContentsMap.registerWebContents(L"/test.json", std::make_shared<WebContentsUTF8StringStream>(oss.str()));
-
-
-	//------------------------------------------------------------------------
-	oss << "{";
-
-	oss << "\"" << "fname" << "\"";
-	oss << ":";
-	oss << "\"" << "code1009" << "\"";
-
-	oss << ",";
-
-	oss << "\"" << "lname" << "\"";
-	oss << ":";
-	oss << "\"" << "한글" << "\"";
-
-	oss << ",";
-
-	oss << "\"" << "sdate" << "\"";
-	oss << ":";
-	oss << "\"" << "1446-10-09" << "\"";
-
-	oss << ",";
-
-	oss << "\"" << "random" << "\"";
-	oss << ":";
-	oss << "\"" << "세종대왕" << "\"";
-
-	oss << "}";
-
-
-	_ContentsMap.registerWebContents(L"/page1/list0.json", std::make_shared<WebContentsUTF8StringStream>(oss.str()));
-
-
-	//------------------------------------------------------------------------
-	oss.str("");
-	oss.clear();
+	_ContentsMap.registerWebContents(L"/page1/list0.json", std::make_shared<WebContentsUTF8StringStream>(json));
 
 
 	//------------------------------------------------------------------------
@@ -813,79 +765,12 @@ void WebView::ContentsWebView_onWebMessage(const std::wstring& urn, const std::w
 	WUI_TRACE(urn);
 	WUI_TRACE(webMessage);
 	
-	if (webMessage == L"undefined")
-	{
-		return;
-	}
-
 
 	//------------------------------------------------------------------------
-	web::json::value jsonObj = web::json::value::parse(webMessage);
+	JsonMessageService jsonMessageService(this);
 
 
-	if (!jsonObj.has_field(L"type"))
-	{
-		return;
-	}
-
-	if (!jsonObj.has_field(L"target"))
-	{
-		return;
-	}
-
-
-	//------------------------------------------------------------------------
-	web::json::value jsonType;
-	web::json::value jsonTarget;
-
-
-	jsonType = jsonObj.at(L"type");
-	jsonTarget = jsonObj.at(L"target");
-
-
-	//------------------------------------------------------------------------
-	std::wstring type;
-	std::wstring target;
-
-
-	switch (jsonType.type())
-	{
-	case web::json::value::Number:
-	case web::json::value::Boolean:
-	case web::json::value::String:
-		type = jsonType.as_string();
-		break;
-
-	default:
-		type = L"json-type?";
-		break;
-	}
-
-	switch (jsonTarget.type())
-	{
-	case web::json::value::Number:
-	case web::json::value::Boolean:
-	case web::json::value::String:
-		target = jsonTarget.as_string();
-		break;
-
-	default:
-		type = L"json-type?";
-		break;
-	}
-
-
-	if ((type == L"?") && (target == L"?"))
-	{
-		postCppMessage1ToContentsWebView();
-	}
-	else
-	{
-		std::wstring message = target + L" : " + type;
-
-
-		::MessageBoxW(getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
-	}
+	jsonMessageService.onWebMessage(webMessage);
 }
 
 //===========================================================================
@@ -1172,6 +1057,13 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 				wui::debugPrintln(jsonArgs);
 
 
+				//-----------------------------------------------------------------------
+				JsonMessageService jsonMessageService(this);
+
+
+				jsonMessageService.onRuntimeExceptionThrown(jsonArgs);
+
+
 				return S_OK;
 			}
 		).Get(),
@@ -1207,57 +1099,6 @@ void WebView::navigateContents(const std::wstring& urn)
 
 //===========================================================================
 #pragma endregion
-
-//===========================================================================
-void WebView::postCppMessage0ToContentsWebView(void)
-{
-	std::wostringstream oss;
-
-
-	oss << L"{";
-
-	oss << L"\"" << L"id" << L"\"";
-	oss << L":";
-	oss << L"\"" << 100 << L"\"";
-
-	oss << L",";
-
-	oss << L"\"" << L"name" << L"\"";
-	oss << L":";
-	oss << L"\"" << L"code1009" << L"\"";
-
-	oss << L"}";
-
-
-	ContentsWebView_postWebMessageAsJson(oss.str());
-}
-
-void WebView::postCppMessage1ToContentsWebView(void)
-{
-	static int id = 100;
-
-	int i;
-
-
-	for(i=0; i<25; i++)
-	{
-		id++;
-
-
-		web::json::value jsonObj = web::json::value::parse(L"{}");
-
-		jsonObj[L"id"] = web::json::value::number(100);
-		jsonObj[L"name"] = web::json::value::string(L"C++에서 보냄");
-		jsonObj[L"no"] = web::json::value::number(id);
-
-
-		utility::stringstream_t stream;
-		jsonObj.serialize(stream);
-
-
-		ContentsWebView_postWebMessageAsJson(stream.str().c_str());
-	}
-}
 
 
 

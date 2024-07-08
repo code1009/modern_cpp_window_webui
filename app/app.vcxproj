@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\AboutDialog.hpp" />
+    <ClInclude Include="app\JsonMessageService.hpp" />
     <ClInclude Include="app\MainFrame.hpp" />
     <ClInclude Include="app\pch.hpp" />
     <ClInclude Include="app\WebContents.hpp" />
@@ -63,6 +64,7 @@
     <ClInclude Include="wui\WindowMessageManipulator.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="app\JsonMessageService.cpp" />
     <ClCompile Include="app\main.cpp" />
     <ClCompile Include="app\MainFrame.cpp" />
     <ClCompile Include="app\WebContents.cpp" />

@@ -101,10 +101,6 @@ public:
 public:
 	void navigate(const std::wstring& uri);
 	void navigateContents(const std::wstring& urn);
-
-public:
-	void postCppMessage0ToContentsWebView(void);
-	void postCppMessage1ToContentsWebView(void);
 };
 
 
