@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<title>code1009</title>
+
+</head>
+<body>
+
+
+<div id="grid" style="width: 100%; height: 500px"></div>
+
+
+<script type="module">
+
+
+class Record
+{
+	_no;
+	_name;
+	
+	constructor(no, name) 
+	{
+		this._no = no;
+		this._name = name;
+	}
+}
+
+class Table
+{
+	_Array;
+
+	constructor() 
+	{
+		this._Array = new Array();
+	}
+	
+	add(rec)
+	{
+		if (this._Array.length<3)
+		{
+			this._Array.push(rec);
+		}
+		else
+		{
+			var i;
+			var count;
+			
+			
+			count = this._Array.length;
+			for(i=0; i<count-1; i++)
+			{
+				this._Array[i]._no    = this._Array[i+1]._no    ;
+				this._Array[i]._name  = this._Array[i+1]._name  ;
+			}
+			
+			
+			this._Array[i]._no   = rec._no   ;
+			this._Array[i]._name = rec._name ;
+		}
+		
+		this.print();
+	}
+	
+	print()
+	{
+		let target;
+		
+		
+		target = document.getElementById("grid");
+		target.innerHTML = "";
+
+
+		this._Array.forEach(
+			rec => 
+			{
+				var html;
+				
+				
+				html = "<p>";
+				html += "no=";
+				html += rec._no;
+				html += " ";
+				html += "name=";
+				html += rec._name;
+				html += "</p>";
+			
+				target.insertAdjacentHTML("beforeEnd", html);
+			}
+		);
+	}
+}
+
+let table = new Table();
+
+table.add(new Record(1, "이름1"));
+table.add(new Record(2, "이름2"));
+table.add(new Record(3, "이름3"));
+table.add(new Record(4, "이름4"));
+table.add(new Record(5, "이름5"));
+
+//table.print();
+//table.print();
+
+</script>
+
+
+</body>
+</html>
