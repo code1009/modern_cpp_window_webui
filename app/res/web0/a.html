@@ -62,6 +62,55 @@ class Table
 		
 		this.print();
 	}
+
+	getHTMLodd(rec)
+	{
+		let html;
+		
+		
+		html = "<p style=\"background-color:tomato;\">";
+
+		html += "no=";
+		html += rec._no;
+		html += " ";
+		html += "name=";
+		html += rec._name;
+		
+		html += "</p>";
+		
+		
+		return html;
+	}
+
+
+	getHTMLeven(rec)
+	{
+		let html;
+		
+		
+		html = "<p style=\"background-color:powderblue;\">";
+
+		html += "no=";
+		html += rec._no;
+		html += " ";
+		html += "name=";
+		html += rec._name;
+		
+		html += "</p>";
+		
+		
+		return html;
+	}
+	
+	getHTML(rec)
+	{
+		if (rec._no%2)
+		{
+			return this.getHTMLodd(rec);
+		}
+		
+		return this.getHTMLeven(rec);
+	}
 	
 	print()
 	{
@@ -78,15 +127,7 @@ class Table
 				let html;
 				
 				
-				html = "<p>";
-				
-				html += "no=";
-				html += rec._no;
-				html += " ";
-				html += "name=";
-				html += rec._name;
-				
-				html += "</p>";
+				html = this.getHTML(rec);
 			
 				target.insertAdjacentHTML("beforeEnd", html);
 			}
