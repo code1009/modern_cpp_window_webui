@@ -219,21 +219,49 @@ class Table
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-let _table = new Table();
+let _myTable = new Table();
 
-_table.addRecord(new Record(1, "이름1"));
-_table.addRecord(new Record(2, "이름2"));
-_table.addRecord(new Record(3, "이름3"));
-_table.addRecord(new Record(4, "이름4"));
-_table.addRecord(new Record(5, "이름5"));
-_table.addRecord(new Record(6, "이름6"));
-_table.addRecord(new Record(7, "이름7"));
-_table.addRecord(new Record(8, "이름8"));
-_table.addRecord(new Record(9, "이름9"));
-_table.addRecord(new Record(10, "이름10"));
+_myTable.addRecord(new Record(1, "이름1"));
+_myTable.addRecord(new Record(2, "이름2"));
+_myTable.addRecord(new Record(3, "이름3"));
+_myTable.addRecord(new Record(4, "이름4"));
+_myTable.addRecord(new Record(5, "이름5"));
+_myTable.addRecord(new Record(6, "이름6"));
+_myTable.addRecord(new Record(7, "이름7"));
+_myTable.addRecord(new Record(8, "이름8"));
+_myTable.addRecord(new Record(9, "이름9"));
+_myTable.addRecord(new Record(10, "이름10"));
 
-//table.putHtml();
-//table.putHtml();
+//_myTable.putHtml();
+//_myTable.putHtml();
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+let timeout;
+let count = 10;;
+
+window.live = function(time) 
+{
+    clearInterval(timeout)
+    if (time) 
+	{
+        timeout = setInterval(
+			() => 
+			{
+				_myTable.addRecord(new Record(count++, "이름10"));
+				_myTable.putHtml();
+            }
+			,
+			time
+		);
+    }
+}
+
+live(1000);
 
 </script>
 
