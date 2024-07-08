@@ -1109,10 +1109,8 @@ void WebView::executeScript(const std::wstring& script)
 			{
 				if (FAILED(errorCode))
 				{
-
+					WUI_TRACE(L"failed");
 				}
-
-
 
 				return S_OK;
 			}
