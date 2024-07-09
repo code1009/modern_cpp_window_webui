@@ -10,31 +10,62 @@
 </head>
 <body>
 
-	페이지0
-	<br/>
-	<br/>
+    페이지0
+    <br />
+    <br />
 
-	<input type="button" id="button1" value="홈" />
-	<br/>
-	<br/>
-	
-	<script type="module">
-	
-		import { navigateContents, contentsPostMessage } from "/basic.js";
-		
-		let target;
-		
-		
-		target = document.getElementById("button1");
-		target.addEventListener(
-			"click", 
-			(e) => 
-				{
-					navigateContents("/index.html");
-				}
-		);
-	
-	</script>
+    <input type="button" id="button1" value="홈" />
+    <br />
+    <br />
+
+    <script type="module">
+
+        import { navigateContents, contentsPostMessage } from "/basic.js";
+
+        let target;
+
+
+        target = document.getElementById("button1");
+        target.addEventListener(
+        "click",
+        (e) =>
+        {
+        navigateContents("/index.html");
+        }
+        );
+
+    </script>
+
+
+    <p id="demo"></p>
+
+    <script>
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = 
+            function()
+            {
+                if(this.readyState == 4 && this.status == 200)
+                {
+                    var myObj = JSON.parse(this.responseText);
+
+                    var html;
+
+                    html = myObj.fname;
+                    html += "&nbsp;";
+                    html += myObj.lname;
+                    html += "&nbsp;";
+                    html += myObj.sdate;
+                    html += "&nbsp;";
+                    html += myObj.random;
+
+                    document.getElementById("demo").innerHTML = html;
+                }
+            };
+
+        xmlhttp.open("GET", "/page1/list0.json", true);
+        xmlhttp.send();
+    </script>
 
 </body>
 </html>
