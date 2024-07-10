@@ -997,12 +997,17 @@ HRESULT WebView::ContentsWebView_setupNewWindowRequested(void)
 
 
 				//-----------------------------------------------------------------------
-				ICoreWebView2_2* webview;
+				wil::com_ptr<ICoreWebView2> senderWebView;
+				wil::com_ptr<ICoreWebView2_2> webView;
 				wil::com_ptr<ICoreWebView2Environment> environment;
 				wil::com_ptr<ICoreWebView2> newWebView;
 
 
-				webview = static_cast<ICoreWebView2_2*>(sender);
+				senderWebView = webview;
+
+				webView = senderWebView->try_query<ICoreWebView2_2>();
+
+
 				hr = webview->get_Environment(&environment);
 				RETURN_IF_FAILED(hr);
 
