@@ -28,24 +28,20 @@ public:
 
 	EventRegistrationToken _ContentsWebView_WebResourceRequested_Token{};
 	EventRegistrationToken _ContentsWebView_WebMessageReceived_Token{};
+	EventRegistrationToken _ContentsWebView_HistoryChanged_Token{};
+	EventRegistrationToken _ContentsWebView_SourceChanged_Token{};
+	EventRegistrationToken _ContentsWebView_NavigationStarting_Token{};
+	EventRegistrationToken _ContentsWebView_NavigationCompleted_Token{};
+	EventRegistrationToken _ContentsWebView_NewWindowRequested_Token{};
 
-public:
-	EventRegistrationToken _ContentsWebView_HistoryChanged_Token = {};
-	EventRegistrationToken _ContentsWebView_SourceChanged_Token = {};
-	EventRegistrationToken _ContentsWebView_NavigationStarting_Token = {};
-	EventRegistrationToken _ContentsWebView_NavigationCompleted_Token = {};
-
-	wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> _ContentsWebView_Security_securityStateChanged_EventReceiver;
-	EventRegistrationToken                                   _ContentsWebView_Security_securityStateChanged_Token = {};
-
-	wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> _ContentsWebView_Log_entryAdded_EventReceiver;
-	EventRegistrationToken                                   _ContentsWebView_Log_entryAdded_Token = {};
-
-	wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> _ContentsWebView_Runtime_consoleAPICalled_EventReceiver;
-	EventRegistrationToken                                   _ContentsWebView_Runtime_consoleAPICalled_Token = {};
-
-	wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> _ContentsWebView_Runtime_exceptionThrown_EventReceiver;
-	EventRegistrationToken                                   _ContentsWebView_Runtime_exceptionThrown_Token = {};
+	wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> _ContentsWebView_DevToolsProtocol_Security_securityStateChanged_EventReceiver;
+	EventRegistrationToken                                   _ContentsWebView_DevToolsProtocol_Security_securityStateChanged_Token{};
+	wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> _ContentsWebView_DevToolsProtocol_Log_entryAdded_EventReceiver;
+	EventRegistrationToken                                   _ContentsWebView_DevToolsProtocol_Log_entryAdded_Token{};
+	wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> _ContentsWebView_DevToolsProtocol_Runtime_consoleAPICalled_EventReceiver;
+	EventRegistrationToken                                   _ContentsWebView_DevToolsProtocol_Runtime_consoleAPICalled_Token{};
+	wil::com_ptr<ICoreWebView2DevToolsProtocolEventReceiver> _ContentsWebView_DevToolsProtocol_Runtime_exceptionThrown_EventReceiver;
+	EventRegistrationToken                                   _ContentsWebView_DevToolsProtocol_Runtime_exceptionThrown_Token{};
 
 public:
 	explicit WebView(HWND hParent);
@@ -89,14 +85,18 @@ public:
 
 public:
 	HRESULT ContentsWebView_setupWebResourceRequestedFilter(void);
-
-public:
 	HRESULT ContentsWebView_setupWebMessageReceived(void);
-	void ContentsWebView_onWebMessage(const std::wstring& urn, const std::wstring& webMessage);
-	void ContentsWebView_postWebMessageAsJson(const std::wstring& msg);
-
-public:
-	HRESULT ContentsWebView_registerEventHandler(void);
+	void    ContentsWebView_onWebMessage(const std::wstring& urn, const std::wstring& webMessage);
+	void    ContentsWebView_postWebMessageAsJson(const std::wstring& msg);
+	HRESULT ContentsWebView_setupHistoryChanged(void);
+	HRESULT ContentsWebView_setupSourceChanged(void);
+	HRESULT ContentsWebView_setupNavigationStarting(void);
+	HRESULT ContentsWebView_setupNavigationCompleted(void);
+	HRESULT ContentsWebView_setupNewWindowRequested(void);
+	HRESULT ContentsWebView_setupDevToolsProtocol_Security_securityStateChanged(void);
+	HRESULT ContentsWebView_setupDevToolsProtocol_Log_entryAdded(void);
+	HRESULT ContentsWebView_setupDevToolsProtocol_Runtime_consoleAPICalled(void);
+	HRESULT ContentsWebView_setupDevToolsProtocol_Runtime_exceptionThrown(void);
 
 public:
 	void navigate(const std::wstring& uri);

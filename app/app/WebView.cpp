@@ -472,8 +472,37 @@ HRESULT WebView::setupContentsWebView(void)
 	hr = ContentsWebView_setupWebMessageReceived();
 	RETURN_IF_FAILED(hr);
 
-	hr = ContentsWebView_registerEventHandler();
+
+	//-----------------------------------------------------------------------
+	hr = ContentsWebView_setupHistoryChanged();
 	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupSourceChanged();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupNavigationStarting();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupNavigationCompleted();
+	RETURN_IF_FAILED(hr);
+
+	//hr = ContentsWebView_setupNewWindowRequested();
+	//RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = ContentsWebView_setupDevToolsProtocol_Security_securityStateChanged();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupDevToolsProtocol_Log_entryAdded();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupDevToolsProtocol_Runtime_consoleAPICalled();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupDevToolsProtocol_Runtime_exceptionThrown();
+	RETURN_IF_FAILED(hr);
+
 
 
 	//-----------------------------------------------------------------------
@@ -776,7 +805,7 @@ void WebView::ContentsWebView_onWebMessage(const std::wstring& urn, const std::w
 }
 
 //===========================================================================
-HRESULT WebView::ContentsWebView_registerEventHandler(void)
+HRESULT WebView::ContentsWebView_setupHistoryChanged(void)
 {
 	//-----------------------------------------------------------------------
 	HRESULT hr;
@@ -793,8 +822,8 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 				//-----------------------------------------------------------------------
 				wil::unique_cotaskmem_string ucsSource;
-				
-				
+
+
 				hr = webview->get_Source(&ucsSource);
 				RETURN_IF_FAILED(hr);
 
@@ -814,6 +843,15 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 		&_ContentsWebView_HistoryChanged_Token
 	);
 	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupSourceChanged(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
 
 
 	//-----------------------------------------------------------------------
@@ -844,6 +882,15 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 		&_ContentsWebView_SourceChanged_Token
 	);
 	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupNavigationStarting(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
 
 
 	//-----------------------------------------------------------------------
@@ -888,6 +935,15 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 	RETURN_IF_FAILED(hr);
 
 
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupNavigationCompleted(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->add_NavigationCompleted(
 		Microsoft::WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(
@@ -900,14 +956,14 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 				//-----------------------------------------------------------------------
 				BOOL navigationSucceeded = FALSE;
 
-				
+
 				hr = args->get_IsSuccess(&navigationSucceeded);
 				if (SUCCEEDED(hr))
 				{
 					WUI_TRACE(L"navigationSucceeded");
 
 
-					//executeScript(L"alert(\"navigationSucceeded\"); var win = window.open(\"/page1/list0.json\", \"PopupWin\", \"width=500,height=600\");");
+					executeScript(L"alert(\"navigationSucceeded\"); var win = window.open(\"/page1/list0.json\", \"PopupWin\", \"width=500,height=600\");");
 				}
 				else
 				{
@@ -923,14 +979,92 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 	RETURN_IF_FAILED(hr);
 
 
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupNewWindowRequested(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->add_NewWindowRequested(
+		Microsoft::WRL::Callback<ICoreWebView2NewWindowRequestedEventHandler>(
+			[this](ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args) -> HRESULT
+			{
+				//-----------------------------------------------------------------------
+				HRESULT hr;
+
+
+				//-----------------------------------------------------------------------
+				ICoreWebView2_2* webview;
+				wil::com_ptr<ICoreWebView2Environment> environment;
+				wil::com_ptr<ICoreWebView2> newWebView;
+
+
+				webview = static_cast<ICoreWebView2_2*>(sender);
+				hr = webview->get_Environment(&environment);
+				RETURN_IF_FAILED(hr);
+
+
+				hr = environment->CreateCoreWebView2Controller(
+					nullptr, // 새 창을 호스팅할 부모 윈도우 핸들
+					Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
+						[args](HRESULT result, ICoreWebView2Controller* controller) -> HRESULT
+						{
+							if (controller != nullptr)
+							{
+								wil::com_ptr<ICoreWebView2> newWebView;
+
+
+								controller->get_CoreWebView2(&newWebView);
+
+								// 새 창에 대한 설정을 여기에서 수행할 수 있습니다.
+								// 예: newWebView->Navigate(L"https://example.com");
+
+								// 새 창의 WebView2 인스턴스를 이벤트 인자에 설정
+								args->put_NewWindow(newWebView.get());
+
+								// 새 창 생성을 처리했음을 알림
+								args->put_Handled(TRUE);
+							}
+							return S_OK;
+						}
+					).Get()
+				);
+				RETURN_IF_FAILED(hr);
+
+
+				return S_OK;
+			}
+		).Get(),
+		&_ContentsWebView_NewWindowRequested_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupDevToolsProtocol_Security_securityStateChanged(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->CallDevToolsProtocolMethod(L"Security.enable", L"{}", nullptr);
 	RETURN_IF_FAILED(hr);
 
-	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Security.securityStateChanged", &_ContentsWebView_Security_securityStateChanged_EventReceiver);
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Security.securityStateChanged", &_ContentsWebView_DevToolsProtocol_Security_securityStateChanged_EventReceiver);
 	RETURN_IF_FAILED(hr);
 
-	hr = _ContentsWebView_Security_securityStateChanged_EventReceiver->add_DevToolsProtocolEventReceived(
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView_DevToolsProtocol_Security_securityStateChanged_EventReceiver->add_DevToolsProtocolEventReceived(
 		Microsoft::WRL::Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
 			{
@@ -954,19 +1088,32 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 				return S_OK;
 			}
 		).Get(),
-		&_ContentsWebView_Security_securityStateChanged_Token
+		&_ContentsWebView_DevToolsProtocol_Security_securityStateChanged_Token
 	);
 	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupDevToolsProtocol_Log_entryAdded(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
 
 
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->CallDevToolsProtocolMethod(L"Log.enable", L"{}", nullptr);
 	RETURN_IF_FAILED(hr);
 
-	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Log.entryAdded", &_ContentsWebView_Log_entryAdded_EventReceiver);
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Log.entryAdded", &_ContentsWebView_DevToolsProtocol_Log_entryAdded_EventReceiver);
 	RETURN_IF_FAILED(hr);
 
-	hr = _ContentsWebView_Log_entryAdded_EventReceiver->add_DevToolsProtocolEventReceived(
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView_DevToolsProtocol_Log_entryAdded_EventReceiver->add_DevToolsProtocolEventReceived(
 		Microsoft::WRL::Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
 			{
@@ -992,19 +1139,32 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 				return S_OK;
 			}
 		).Get(),
-		&_ContentsWebView_Log_entryAdded_Token
+		&_ContentsWebView_DevToolsProtocol_Log_entryAdded_Token
 	);
 	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupDevToolsProtocol_Runtime_consoleAPICalled(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
 
 
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->CallDevToolsProtocolMethod(L"Runtime.enable", L"{}", nullptr);
 	RETURN_IF_FAILED(hr);
 
-	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Runtime.consoleAPICalled", &_ContentsWebView_Runtime_consoleAPICalled_EventReceiver);
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Runtime.consoleAPICalled", &_ContentsWebView_DevToolsProtocol_Runtime_consoleAPICalled_EventReceiver);
 	RETURN_IF_FAILED(hr);
 
-	hr = _ContentsWebView_Runtime_consoleAPICalled_EventReceiver->add_DevToolsProtocolEventReceived(
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView_DevToolsProtocol_Runtime_consoleAPICalled_EventReceiver->add_DevToolsProtocolEventReceived(
 		Microsoft::WRL::Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
 			{
@@ -1030,16 +1190,25 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 				return S_OK;
 			}
 		).Get(),
-		&_ContentsWebView_Runtime_consoleAPICalled_Token
+		&_ContentsWebView_DevToolsProtocol_Runtime_consoleAPICalled_Token
 	);
+	RETURN_IF_FAILED(hr);
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_setupDevToolsProtocol_Runtime_exceptionThrown(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Runtime.exceptionThrown", &_ContentsWebView_DevToolsProtocol_Runtime_exceptionThrown_EventReceiver);
 	RETURN_IF_FAILED(hr);
 
 
 	//-----------------------------------------------------------------------
-	hr = _ContentsWebView->GetDevToolsProtocolEventReceiver(L"Runtime.exceptionThrown", &_ContentsWebView_Runtime_exceptionThrown_EventReceiver);
-	RETURN_IF_FAILED(hr);
-
-	hr = _ContentsWebView_Runtime_exceptionThrown_EventReceiver->add_DevToolsProtocolEventReceived(
+	hr = _ContentsWebView_DevToolsProtocol_Runtime_exceptionThrown_EventReceiver->add_DevToolsProtocolEventReceived(
 		Microsoft::WRL::Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
 			{
@@ -1072,7 +1241,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 				return S_OK;
 			}
 		).Get(),
-		&_ContentsWebView_Runtime_exceptionThrown_Token
+		&_ContentsWebView_DevToolsProtocol_Runtime_exceptionThrown_Token
 	);
 	RETURN_IF_FAILED(hr);
 
