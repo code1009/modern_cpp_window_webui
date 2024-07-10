@@ -2,6 +2,7 @@
 //===========================================================================
 #include "pch.hpp"
 #include "JsonMessageService.hpp"
+#include <wrl.h>
 
 
 
@@ -9,7 +10,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-using namespace Microsoft::WRL;
+//using namespace Microsoft::WRL;
 
 
 
@@ -325,7 +326,7 @@ void WebView::createWebView(void)
 		nullptr, 
 		getContentsDataFolder().c_str(),
 		nullptr,
-		Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
 			[this](HRESULT hresult, ICoreWebView2Environment* env) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -361,7 +362,7 @@ HRESULT WebView::createContentsWebViewController(void)
 
 	hr = _ContentsWebViewEnvironment->CreateCoreWebView2Controller(
 		getHandle(),
-		Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
 			[this](HRESULT hresult, ICoreWebView2Controller* controller) -> HRESULT
 			{
 				RETURN_IF_FAILED(hresult);
@@ -555,7 +556,7 @@ HRESULT WebView::ContentsWebView_setupWebResourceRequestedFilter(void)
 
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->add_WebResourceRequested(
-		Callback<ICoreWebView2WebResourceRequestedEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2WebResourceRequestedEventHandler>(
 			[this](ICoreWebView2* sender, ICoreWebView2WebResourceRequestedEventArgs* args)
 			{
 				//-----------------------------------------------------------------------
@@ -783,7 +784,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->add_HistoryChanged(
-		Callback<ICoreWebView2HistoryChangedEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2HistoryChangedEventHandler>(
 			[this](ICoreWebView2* webview, IUnknown* args) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -817,7 +818,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->add_SourceChanged(
-		Callback<ICoreWebView2SourceChangedEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2SourceChangedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2SourceChangedEventArgs* args) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -847,7 +848,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->add_NavigationStarting(
-		Callback<ICoreWebView2NavigationStartingEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2NavigationStartingEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -889,7 +890,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 
 	//-----------------------------------------------------------------------
 	hr = _ContentsWebView->add_NavigationCompleted(
-		Callback<ICoreWebView2NavigationCompletedEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -930,7 +931,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 	RETURN_IF_FAILED(hr);
 
 	hr = _ContentsWebView_Security_securityStateChanged_EventReceiver->add_DevToolsProtocolEventReceived(
-		Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -966,7 +967,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 	RETURN_IF_FAILED(hr);
 
 	hr = _ContentsWebView_Log_entryAdded_EventReceiver->add_DevToolsProtocolEventReceived(
-		Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -1004,7 +1005,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 	RETURN_IF_FAILED(hr);
 
 	hr = _ContentsWebView_Runtime_consoleAPICalled_EventReceiver->add_DevToolsProtocolEventReceived(
-		Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -1039,7 +1040,7 @@ HRESULT WebView::ContentsWebView_registerEventHandler(void)
 	RETURN_IF_FAILED(hr);
 
 	hr = _ContentsWebView_Runtime_exceptionThrown_EventReceiver->add_DevToolsProtocolEventReceived(
-		Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 			[this](ICoreWebView2* webview, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args) -> HRESULT
 			{
 				//-----------------------------------------------------------------------
@@ -1104,7 +1105,7 @@ void WebView::navigateContents(const std::wstring& urn)
 void WebView::executeScript(const std::wstring& script)
 {
 	_ContentsWebView->ExecuteScript(script.c_str(),
-		Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
+		Microsoft::WRL::Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
 			[this](HRESULT errorCode, LPCWSTR resultObjectAsJson) -> HRESULT
 			{
 				if (FAILED(errorCode))
