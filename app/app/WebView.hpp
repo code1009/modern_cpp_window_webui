@@ -102,6 +102,7 @@ public:
 	HRESULT ContentsWebView_setupNavigationStarting(void);
 	HRESULT ContentsWebView_setupNavigationCompleted(void);
 	HRESULT ContentsWebView_setupNewWindowRequested(void);
+
 	HRESULT ContentsWebView_setupDevToolsProtocol_Security_securityStateChanged(void);
 	HRESULT ContentsWebView_setupDevToolsProtocol_Log_entryAdded(void);
 	HRESULT ContentsWebView_setupDevToolsProtocol_Runtime_consoleAPICalled(void);
