@@ -963,7 +963,7 @@ HRESULT WebView::ContentsWebView_setupNavigationCompleted(void)
 					WUI_TRACE(L"navigationSucceeded");
 
 
-					executeScript(L"alert(\"navigationSucceeded\"); var win = window.open(\"/page1/list0.json\", \"PopupWin\", \"width=500,height=600\");");
+					//executeScript(L"alert(\"navigationSucceeded\"); var win = window.open(\"/page1/list0.json\", \"PopupWin\", \"width=500,height=600\");");
 				}
 				else
 				{
