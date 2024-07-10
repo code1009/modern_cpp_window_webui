@@ -267,6 +267,7 @@ std::wstring WebView::parseContentsURN(const std::wstring& uri) const
 	return urn;
 }
 
+//===========================================================================
 void WebView::registerContentsMap(void)
 {
 	//------------------------------------------------------------------------
@@ -355,6 +356,7 @@ void WebView::destroyWebView(void)
 	_ContentsWebViewEnvironment->Release();
 }
 
+//===========================================================================
 HRESULT WebView::createContentsWebViewController(void)
 {
 	HRESULT hr;
@@ -371,12 +373,12 @@ HRESULT WebView::createContentsWebViewController(void)
 				if (controller != nullptr)
 				{
 					//-----------------------------------------------------------------------
-					_ContentsWebViewController = controller;
-					
-
-					//-----------------------------------------------------------------------
 					HRESULT hr;
 
+
+					//-----------------------------------------------------------------------
+					_ContentsWebViewController = controller;
+					
 
 					//-----------------------------------------------------------------------
 					hr = setupContentsWebViewController();
@@ -387,13 +389,9 @@ HRESULT WebView::createContentsWebViewController(void)
 					hr = _ContentsWebViewController->get_CoreWebView2(&_ContentsWebView);
 					RETURN_IF_FAILED(hr);
 
-
-					//-----------------------------------------------------------------------
 					hr = setupContentsWebViewSettings();
 					RETURN_IF_FAILED(hr);
 
-
-					//-----------------------------------------------------------------------
 					hr = setupContentsWebView();
 					RETURN_IF_FAILED(hr);
 
@@ -459,59 +457,7 @@ HRESULT WebView::resizeContentsWebViewController(void)
 	return S_OK;
 }
 
-HRESULT WebView::setupContentsWebView(void)
-{
-	//-----------------------------------------------------------------------
-	HRESULT hr;
-
-
-	//-----------------------------------------------------------------------
-	hr = ContentsWebView_setupWebResourceRequestedFilter();
-	RETURN_IF_FAILED(hr);
-
-	hr = ContentsWebView_setupWebMessageReceived();
-	RETURN_IF_FAILED(hr);
-
-
-	//-----------------------------------------------------------------------
-	hr = ContentsWebView_setupHistoryChanged();
-	RETURN_IF_FAILED(hr);
-
-	hr = ContentsWebView_setupSourceChanged();
-	RETURN_IF_FAILED(hr);
-
-	hr = ContentsWebView_setupNavigationStarting();
-	RETURN_IF_FAILED(hr);
-
-	hr = ContentsWebView_setupNavigationCompleted();
-	RETURN_IF_FAILED(hr);
-
-	//hr = ContentsWebView_setupNewWindowRequested();
-	//RETURN_IF_FAILED(hr);
-
-
-	//-----------------------------------------------------------------------
-	hr = ContentsWebView_setupDevToolsProtocol_Security_securityStateChanged();
-	RETURN_IF_FAILED(hr);
-
-	hr = ContentsWebView_setupDevToolsProtocol_Log_entryAdded();
-	RETURN_IF_FAILED(hr);
-
-	hr = ContentsWebView_setupDevToolsProtocol_Runtime_consoleAPICalled();
-	RETURN_IF_FAILED(hr);
-
-	hr = ContentsWebView_setupDevToolsProtocol_Runtime_exceptionThrown();
-	RETURN_IF_FAILED(hr);
-
-
-
-	//-----------------------------------------------------------------------
-	navigate(_StartURI);
-
-
-	return S_OK;
-}
-
+//===========================================================================
 HRESULT WebView::setupContentsWebViewSettings(void)
 {
 	//-----------------------------------------------------------------------
@@ -564,6 +510,59 @@ HRESULT WebView::setupContentsWebViewSettings(void)
 	hr = _ContentsWebView->AddScriptToExecuteOnDocumentCreated(script.c_str(), nullptr);
 	RETURN_IF_FAILED(hr);
 #endif
+
+	return S_OK;
+}
+
+//===========================================================================
+HRESULT WebView::setupContentsWebView(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	hr = ContentsWebView_setupWebResourceRequestedFilter();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupWebMessageReceived();
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = ContentsWebView_setupHistoryChanged();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupSourceChanged();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupNavigationStarting();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupNavigationCompleted();
+	RETURN_IF_FAILED(hr);
+
+	//hr = ContentsWebView_setupNewWindowRequested();
+	//RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	hr = ContentsWebView_setupDevToolsProtocol_Security_securityStateChanged();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupDevToolsProtocol_Log_entryAdded();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupDevToolsProtocol_Runtime_consoleAPICalled();
+	RETURN_IF_FAILED(hr);
+
+	hr = ContentsWebView_setupDevToolsProtocol_Runtime_exceptionThrown();
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	navigate(_StartURI);
+
 
 	return S_OK;
 }
@@ -1047,6 +1046,7 @@ HRESULT WebView::ContentsWebView_setupNewWindowRequested(void)
 	return S_OK;
 }
 
+//===========================================================================
 HRESULT WebView::ContentsWebView_setupDevToolsProtocol_Security_securityStateChanged(void)
 {
 	//-----------------------------------------------------------------------

@@ -72,18 +72,22 @@ public:
 	std::wstring parseContentsURN(const std::wstring& uri) const;
 
 public:
+	void registerContentsMap(void);
+
+public:
 	void createWebView(void);
 	void destroyWebView(void);
-	void registerContentsMap(void);
 
 public:
 	HRESULT createContentsWebViewController(void);
 	HRESULT resizeContentsWebViewController(void);
 	HRESULT  setupContentsWebViewController(void);
-	HRESULT  setupContentsWebView(void);
-	HRESULT  setupContentsWebViewSettings(void);
 
 public:
+	HRESULT setupContentsWebViewSettings(void);
+
+public:
+	HRESULT setupContentsWebView(void);
 	HRESULT ContentsWebView_setupWebResourceRequestedFilter(void);
 	HRESULT ContentsWebView_setupWebMessageReceived(void);
 	void    ContentsWebView_onWebMessage(const std::wstring& urn, const std::wstring& webMessage);
