@@ -804,6 +804,7 @@ void WebView::ContentsWebView_onWebMessage(const std::wstring& urn, const std::w
 }
 
 //===========================================================================
+#if 0
 HRESULT WebView::ContentsWebView_setupHistoryChanged(void)
 {
 	//-----------------------------------------------------------------------
@@ -843,6 +844,50 @@ HRESULT WebView::ContentsWebView_setupHistoryChanged(void)
 	);
 	RETURN_IF_FAILED(hr);
 
+
+	return S_OK;
+}
+#endif
+
+HRESULT WebView::ContentsWebView_setupHistoryChanged(void)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	hr = _ContentsWebView->add_HistoryChanged(
+		Microsoft::WRL::Callback<ICoreWebView2HistoryChangedEventHandler>(this, &WebView::ContentsWebView_onHistoryChanged).Get(),
+		&_ContentsWebView_HistoryChanged_Token
+	);
+	RETURN_IF_FAILED(hr);
+
+
+	return S_OK;
+}
+
+HRESULT WebView::ContentsWebView_onHistoryChanged(ICoreWebView2* webview, IUnknown* args)
+{
+	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	//-----------------------------------------------------------------------
+	wil::unique_cotaskmem_string ucsSource;
+
+
+	hr = webview->get_Source(&ucsSource);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	std::wstring source(ucsSource.get());
+
+
+	WUI_TRACE(source);
+
+
+	//-----------------------------------------------------------------------
 
 	return S_OK;
 }
@@ -1003,12 +1048,11 @@ HRESULT WebView::ContentsWebView_setupNewWindowRequested(void)
 				wil::com_ptr<ICoreWebView2> newWebView;
 
 
-				senderWebView = webview;
+				senderWebView = sender;
+				senderWebView->QueryInterface(IID_PPV_ARGS(&webView));
 
-				webView = senderWebView->try_query<ICoreWebView2_2>();
 
-
-				hr = webview->get_Environment(&environment);
+				hr = webView->get_Environment(&environment);
 				RETURN_IF_FAILED(hr);
 
 

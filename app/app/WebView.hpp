@@ -88,11 +88,16 @@ public:
 
 public:
 	HRESULT setupContentsWebView(void);
+	
 	HRESULT ContentsWebView_setupWebResourceRequestedFilter(void);
+
 	HRESULT ContentsWebView_setupWebMessageReceived(void);
 	void    ContentsWebView_onWebMessage(const std::wstring& urn, const std::wstring& webMessage);
 	void    ContentsWebView_postWebMessageAsJson(const std::wstring& msg);
+
 	HRESULT ContentsWebView_setupHistoryChanged(void);
+	HRESULT ContentsWebView_onHistoryChanged(ICoreWebView2* webview, IUnknown* args);
+
 	HRESULT ContentsWebView_setupSourceChanged(void);
 	HRESULT ContentsWebView_setupNavigationStarting(void);
 	HRESULT ContentsWebView_setupNavigationCompleted(void);
