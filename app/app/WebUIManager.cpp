@@ -229,7 +229,7 @@ void WebUIManager::onDestroyWindow(HWND hWindow)
 	::PostMessage(_hMainWindow, WM_USER + 0, (WPARAM)hWindow, 0);
 }
 
-void WebUIManager::deleteAndDestroyAllWindow(void)
+void WebUIManager::deleteAndDestroyAllWindows(void)
 {
 	for (auto e : _WindowMap)
 	{

@@ -63,7 +63,7 @@ public:
 	std::shared_ptr<WebUIWindow> newChildWindow(HWND hParentWindow, std::wstring uri);
 	void onDestroyWindow(HWND hWindow);
 	void deleteWindow(HWND hWindow);
-	void deleteAndDestroyAllWindow(void);
+	void deleteAndDestroyAllWindows(void);
 	void moveWindow(HWND hParentWindow, const RECT& rect);
 };
 
