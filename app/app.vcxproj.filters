@@ -140,10 +140,13 @@
     <ClInclude Include="app\WebContents.hpp">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\WebView.hpp">
+    <ClInclude Include="app\WebContentsView.hpp">
       <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="app\JsonMessageService.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\WebContentsManager.hpp">
       <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>
@@ -169,10 +172,13 @@
     <ClCompile Include="app\WebContents.cpp">
       <Filter>app</Filter>
     </ClCompile>
-    <ClCompile Include="app\WebView.cpp">
+    <ClCompile Include="app\WebContentsView.cpp">
       <Filter>app</Filter>
     </ClCompile>
     <ClCompile Include="app\JsonMessageService.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\WebContentsManager.cpp">
       <Filter>app</Filter>
     </ClCompile>
   </ItemGroup>

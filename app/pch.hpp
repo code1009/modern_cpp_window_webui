@@ -59,4 +59,6 @@
 #include "app/MainFrame.hpp"
 
 #include "app/WebContents.hpp"
-#include "app/WebView.hpp"
+#include "app/WebContentsView.hpp"
+#include "app/WebContentsManager.hpp"
+

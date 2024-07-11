@@ -54,7 +54,8 @@
     <ClInclude Include="app\MainFrame.hpp" />
     <ClInclude Include="app\pch.hpp" />
     <ClInclude Include="app\WebContents.hpp" />
-    <ClInclude Include="app\WebView.hpp" />
+    <ClInclude Include="app\WebContentsManager.hpp" />
+    <ClInclude Include="app\WebContentsView.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.hpp" />
     <ClInclude Include="res\Resource.h" />
@@ -68,7 +69,8 @@
     <ClCompile Include="app\main.cpp" />
     <ClCompile Include="app\MainFrame.cpp" />
     <ClCompile Include="app\WebContents.cpp" />
-    <ClCompile Include="app\WebView.cpp" />
+    <ClCompile Include="app\WebContentsManager.cpp" />
+    <ClCompile Include="app\WebContentsView.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
