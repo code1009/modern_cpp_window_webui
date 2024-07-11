@@ -21,8 +21,8 @@ class WebUIManager
 private:
 	HWND                                         _hMainWindow{ nullptr };
 	WebUIContentsMap                             _ContentsMap{};
-	WebUIMessageService                          _MessageService;
-	std::map<HWND, std::shared_ptr<WebUIWindow>> _WindowMap;
+	std::shared_ptr<WebUIMessageService>         _MessageService{};
+	std::map<HWND, std::shared_ptr<WebUIWindow>> _WindowMap{};
 
 
 	//-------------------------------------------------------------------------
@@ -60,7 +60,9 @@ public:
 public:
 	void newPopupWindow(HWND hParentWindow, std::wstring uri);
 	void newChildWindow(HWND hParentWindow, std::wstring uri);
+	void onDestroyWindow(HWND hWindow);
 	void deleteWindow(HWND hWindow);
+	void deleteAndDestroyAllWindow(void);
 
 	void moveWindow(HWND hParentWindow, const RECT& rect);
 };

@@ -97,6 +97,10 @@ void MainFrame::onDestory(wui::WindowMessage& windowMessage)
 void MainFrame::onClose(wui::WindowMessage& windowMessage)
 {
 	//-----------------------------------------------------------------------
+	_WebUIManager->deleteAndDestroyAllWindow();
+
+
+	//-----------------------------------------------------------------------
 	destroyWindow();
 }
 

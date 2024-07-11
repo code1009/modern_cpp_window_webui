@@ -29,6 +29,8 @@ namespace app
 WebUIManager::WebUIManager(HWND hMainWindow):
 	_hMainWindow{ hMainWindow }
 {
+	_MessageService = std::make_shared<WebUIMessageService>(this);
+
 	registerContentsMap();
 }
 
@@ -140,18 +142,12 @@ void WebUIManager::registerContentsMap(void)
 
 
 	//------------------------------------------------------------------------
-//	JsonMessageService jsonMessageService(this);
-//	std::wstring json;
+	std::wstring json;
 
 
-//	json = jsonMessageService.getMessage_page1_list0_json();
+	json = _MessageService->getMessage_page1_list0_json();
 
-//	_ContentsMap.registerWebContents(L"/page1/list0.json", std::make_shared<WebContentsUTF8StringStream>(json));
-
-
-	//------------------------------------------------------------------------
-	//_StartURI = getContentsURI(L"/page1/list0.json");
-	//_StartURI = getContentsURI(L"/index.html");
+	_ContentsMap.registerContents(L"/page1/list0.json", std::make_shared<WebUIContentsUTF8StringStream>(json));
 }
 
 WebUIContentsMap* WebUIManager::getContentsMap(void)
@@ -162,7 +158,7 @@ WebUIContentsMap* WebUIManager::getContentsMap(void)
 //===========================================================================
 WebUIMessageService* WebUIManager::getMessageService(void)
 {
-	return &_MessageService;
+	return _MessageService.get();
 }
 
 //===========================================================================
@@ -189,12 +185,42 @@ void WebUIManager::deleteWindow(HWND hWindow)
 
 	if(it!=_WindowMap.end())
 	{
+		(*it).second->destroyWindow();
+
 		_WindowMap.erase(it);
 	}
 	else
 	{
 		WUI_TRACE(L"window handle not found");
 	}
+}
+
+void WebUIManager::onDestroyWindow(HWND hWindow)
+{
+	auto it = _WindowMap.find(hWindow);
+
+
+	if (it != _WindowMap.end())
+	{
+		if ((*it).second->isPopupWindow())
+		{
+			_WindowMap.erase(it);
+		}
+	}
+	else
+	{
+		WUI_TRACE(L"window handle not found");
+	}
+}
+
+void WebUIManager::deleteAndDestroyAllWindow(void)
+{
+	for(auto e : _WindowMap)
+	{
+		e.second->destroyWindow();
+	}
+
+	_WindowMap.clear();
 }
 
 void WebUIManager::moveWindow(HWND hParentWindow, const RECT& rect)
@@ -212,6 +238,9 @@ void WebUIManager::moveWindow(HWND hParentWindow, const RECT& rect)
 		}
 	}
 }
+
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -26,7 +26,7 @@ class WebUIManager;
 class WebUIWindow : public wui::BasicWindow
 {
 	//-------------------------------------------------------------------------
-public:
+private:
 	WebUIManager* _Manager{ nullptr };
 	std::wstring  _URI{ };
 	bool          _PopupWindowStyle{ false };
@@ -87,6 +87,8 @@ public:
 public:
 	int getDPIAwareBound(int bound) const;
 
+	bool isPopupWindow(void);
+
 
 	//-------------------------------------------------------------------------
 public:
@@ -103,9 +105,13 @@ public:
 	HRESULT resizeWebView_Controller(void);
 	HRESULT  setupWebView_Controller(void);
 
+
+	//-------------------------------------------------------------------------
 public:
 	HRESULT setupWebView_Settings(void);
 
+
+	//-------------------------------------------------------------------------
 public:
 	HRESULT setupWebView(void);
 	
@@ -133,10 +139,16 @@ public:
 	HRESULT setupWebView_DevToolsProtocol_Runtime_exceptionThrown      (void);
 	HRESULT    onWebView_DevToolsProtocol_Runtime_exceptionThrown      (ICoreWebView2* sender, ICoreWebView2DevToolsProtocolEventReceivedEventArgs* args);
 
-public:
+
+	//-------------------------------------------------------------------------
+private:
 	void onWebMessage(const std::wstring& urn, const std::wstring& webMessage);
+
+public:
 	void postWebMessageAsJson(const std::wstring& msg);
 
+
+	//-------------------------------------------------------------------------
 public:
 	void navigate(const std::wstring& uri);
 	void navigateContents(const std::wstring& urn);

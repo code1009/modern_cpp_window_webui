@@ -133,7 +133,7 @@ void WebUIWindow::onDestory(wui::WindowMessage& windowMessage)
 	destroyWebView();
 	WUI_TRACE(L"destroyWebView-end");
 
-	_Manager->deleteWindow(getHandle());
+	_Manager->onDestroyWindow(getHandle());
 }
 
 void WebUIWindow::onClose(wui::WindowMessage& windowMessage)
@@ -205,6 +205,11 @@ int WebUIWindow::getDPIAwareBound(int bound) const
 	constexpr int DEFAULT_DPI = 96;
 
 	return (bound * GetDpiForWindow(getHandle()) / DEFAULT_DPI);
+}
+
+bool WebUIWindow::isPopupWindow(void)
+{
+	return _PopupWindowStyle;
 }
 
 //===========================================================================
@@ -1099,7 +1104,7 @@ HRESULT WebUIWindow::onWebView_DevToolsProtocol_Runtime_exceptionThrown(ICoreWeb
 
 
 	//-----------------------------------------------------------------------
-	_Manager->getMessageService()->onRuntimeExceptionThrown(jsonArgs);
+	_Manager->getMessageService()->onRuntimeExceptionThrown(this, jsonArgs);
 
 
 	return S_OK;
@@ -1145,7 +1150,7 @@ void WebUIWindow::onWebMessage(const std::wstring& urn, const std::wstring& webM
 
 
 	//------------------------------------------------------------------------
-	_Manager->getMessageService()->onWebMessage(webMessage);
+	_Manager->getMessageService()->onWebMessage(this, webMessage);
 }
 
 //===========================================================================

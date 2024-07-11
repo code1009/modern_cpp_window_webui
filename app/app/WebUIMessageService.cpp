@@ -17,13 +17,8 @@ namespace app
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WebUIMessageService::WebUIMessageService():
-	_WebView{ nullptr }
-{
-}
-
-WebUIMessageService::WebUIMessageService(WebView* webView):
-	_WebView{ webView }
+WebUIMessageService::WebUIMessageService(WebUIManager* manager):
+	_Manager{ manager }
 {
 }
 
@@ -32,7 +27,7 @@ WebUIMessageService::~WebUIMessageService()
 }
 
 //===========================================================================
-void WebUIMessageService::onRuntimeExceptionThrown(const std::wstring& message)
+void WebUIMessageService::onRuntimeExceptionThrown(WebUIWindow* window, const std::wstring& message)
 {
 	//------------------------------------------------------------------------
 	if (message == L"undefined")
@@ -197,7 +192,7 @@ void WebUIMessageService::onRuntimeExceptionThrown(const std::wstring& message)
 
 	
 	OutputDebugStringW(oss.str().c_str());
-	//::MessageBoxW(_WebView->getHandle(), oss.str().c_str(), L"RuntimeExceptionThrown", MB_OK);
+	::MessageBoxW(window->getHandle(), oss.str().c_str(), L"RuntimeExceptionThrown", MB_OK);
 
 
 	//------------------------------------------------------------------------
@@ -207,7 +202,7 @@ void WebUIMessageService::onRuntimeExceptionThrown(const std::wstring& message)
 
 
 //===========================================================================
-void WebUIMessageService::onWebMessage(const std::wstring& message)
+void WebUIMessageService::onWebMessage(WebUIWindow* window, const std::wstring& message)
 {
 	//------------------------------------------------------------------------
 	if (message == L"undefined")
@@ -217,10 +212,10 @@ void WebUIMessageService::onWebMessage(const std::wstring& message)
 
 
 	//------------------------------------------------------------------------
-	onWebMessageTargetType(message);
+	onWebMessageTargetType(window, message);
 }
 
-bool WebUIMessageService::onWebMessageTargetType(const std::wstring& message)
+bool WebUIMessageService::onWebMessageTargetType(WebUIWindow* window, const std::wstring& message)
 {
 	//------------------------------------------------------------------------
 	web::json::value jsonMessage = web::json::value::parse(message);
@@ -253,7 +248,7 @@ bool WebUIMessageService::onWebMessageTargetType(const std::wstring& message)
 	//------------------------------------------------------------------------
 	try
 	{
-		rv = onWebMessageTargetType0(jsonMessage, jsonTarget, jsonType);
+		rv = onWebMessageTargetType0(window, jsonMessage, jsonTarget, jsonType);
 		if (true == rv)
 		{
 			return true;
@@ -268,7 +263,7 @@ bool WebUIMessageService::onWebMessageTargetType(const std::wstring& message)
 	//------------------------------------------------------------------------
 	try
 	{
-		rv = onWebMessageTargetType1(jsonMessage, jsonTarget, jsonType);
+		rv = onWebMessageTargetType1(window, jsonMessage, jsonTarget, jsonType);
 		if (true == rv)
 		{
 			return true;
@@ -283,7 +278,7 @@ bool WebUIMessageService::onWebMessageTargetType(const std::wstring& message)
 	return false;
 }
 
-bool WebUIMessageService::onWebMessageTargetType0(web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType)
+bool WebUIMessageService::onWebMessageTargetType0(WebUIWindow* window, web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType)
 {
 	//------------------------------------------------------------------------
 	switch (jsonTarget.type())
@@ -324,20 +319,20 @@ bool WebUIMessageService::onWebMessageTargetType0(web::json::value& jsonMessage,
 	//------------------------------------------------------------------------
 	if ((target == L"gridUpdate") && (type == L"click"))
 	{
-		postMessage_gridUpdate();
+		postMessage_gridUpdate(window);
 	}
 	else
 	{
 		std::wstring message = target + L" : " + type;
 
 
-		//::MessageBoxW(_WebView->getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
+		::MessageBoxW(window->getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
 	}
 
 	return true;
 }
 
-bool WebUIMessageService::onWebMessageTargetType1(web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType)
+bool WebUIMessageService::onWebMessageTargetType1(WebUIWindow* window, web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType)
 {
 	//------------------------------------------------------------------------
 	web::json::value jsonTargetId;
@@ -390,14 +385,14 @@ bool WebUIMessageService::onWebMessageTargetType1(web::json::value& jsonMessage,
 	std::wstring message = targetId + L" : " + type;
 
 
-	//::MessageBoxW(_WebView->getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
+	::MessageBoxW(window->getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
 
 
 	return true;
 }
 
 //===========================================================================
-void WebUIMessageService::postMessage_gridUpdate(void)
+void WebUIMessageService::postMessage_gridUpdate(WebUIWindow* window)
 {
 	static int id = 100;
 
@@ -409,11 +404,11 @@ void WebUIMessageService::postMessage_gridUpdate(void)
 		id++;
 
 
-		postMessage_gridRecord(id);
+		postMessage_gridRecord(window, id);
 	}
 }
 
-void WebUIMessageService::postMessage_gridRecord(int no)
+void WebUIMessageService::postMessage_gridRecord(WebUIWindow* window, int no)
 {
 	web::json::value jsonMessage = web::json::value::parse(L"{}");
 
@@ -430,7 +425,7 @@ void WebUIMessageService::postMessage_gridRecord(int no)
 	jsonMessage.serialize(stream);
 
 	
-	//_WebView->ContentsWebView_postWebMessageAsJson(stream.str().c_str());
+	window->postWebMessageAsJson(stream.str().c_str());
 }
 
 //===========================================================================
@@ -453,6 +448,8 @@ std::wstring WebUIMessageService::getMessage_page1_list0_json(void)
 
 	return stream.str();
 }
+
+
 
 
 
