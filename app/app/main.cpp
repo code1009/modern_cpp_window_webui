@@ -6,6 +6,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+#if 0
 #ifdef _DEBUG
 
 #include "../vld/include/vld.h"
@@ -14,6 +15,7 @@
 // $(ProjectDir)\vld\lib\Win64; % (AdditionalLibraryDirectories)
 
 #endif // _DEBUG
+#endif
 
 
 
