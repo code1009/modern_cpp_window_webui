@@ -1173,6 +1173,8 @@ HRESULT WebUIWindow::setupWebView_DevToolsProtocol_Runtime_consoleAPICalled(void
 		&_WebView_DevToolsProtocol_Runtime_consoleAPICalled_Token
 	);
 	RETURN_IF_FAILED(hr);
+
+
 	return S_OK;
 }
 
