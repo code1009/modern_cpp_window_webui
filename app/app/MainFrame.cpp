@@ -52,19 +52,6 @@ MainFrame::MainFrame()
 	//-----------------------------------------------------------------------
 	::ShowWindow(getHandle(), SW_SHOW);
 	::UpdateWindow(getHandle());
-
-
-	//-----------------------------------------------------------------------
-	MessageBoxA(nullptr, (LPCSTR)u8"가나다라", (LPCSTR)u8"제목", MB_OK);
-#if 0
-	<application xmlns="urn:schemas-microsoft-com:asm.v3">
-		<windowsSettings>
-			<activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage>
-			<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
-			<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor</dpiAwareness>
-		</windowsSettings>
-	</application>
-#endif
 }
 
 MainFrame::~MainFrame()

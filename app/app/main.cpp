@@ -101,6 +101,22 @@ int APIENTRY wWinMain(
 	LPWSTR    lpCmdLine,
 	int       nCmdShow)
 {
+	//-----------------------------------------------------------------------
+	MessageBoxA(nullptr, (LPCSTR)u8"가나다라", (LPCSTR)u8"제목", MB_OK);
+#if 0
+	https://learn.microsoft.com/en-us/windows/apps/design/globalizing/use-utf8-code-page
+
+	<application xmlns = "urn:schemas-microsoft-com:asm.v3">
+		<windowsSettings>
+		<activeCodePage xmlns = "http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF - 8 < / activeCodePage >
+		<dpiAware xmlns = "http://schemas.microsoft.com/SMI/2005/WindowsSettings">true< / dpiAware>
+		<dpiAwareness xmlns = "http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor< / dpiAwareness>
+		</windowsSettings>
+	</application>
+#endif
+
+
+	//-----------------------------------------------------------------------
 	wui::getWindowInstance()->setHandle(hInstance);
 	run();
 
