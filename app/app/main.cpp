@@ -6,7 +6,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#if 0
+#if 1
 #ifdef _DEBUG
 
 #include "../vld/include/vld.h"
@@ -15,19 +15,6 @@
 // $(ProjectDir)\vld\lib\Win64; % (AdditionalLibraryDirectories)
 
 #endif // _DEBUG
-#endif
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-#if 0
-
-# Code alignment for Visual Studio
-https ://marketplace.visualstudio.com/items?itemName=cpmcgrath.Codealignment
-
 #endif
 
 
@@ -101,9 +88,12 @@ int APIENTRY wWinMain(
 	LPWSTR    lpCmdLine,
 	int       nCmdShow)
 {
+#if 0
 	//-----------------------------------------------------------------------
 	MessageBoxA(nullptr, (LPCSTR)u8"가나다라", (LPCSTR)u8"제목", MB_OK);
-#if 0
+	/*
+	아래 적용하면 vld에서 오류가 발생함.
+
 	https://learn.microsoft.com/en-us/windows/apps/design/globalizing/use-utf8-code-page
 
 	<application xmlns = "urn:schemas-microsoft-com:asm.v3">
@@ -113,6 +103,7 @@ int APIENTRY wWinMain(
 		<dpiAwareness xmlns = "http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor< / dpiAwareness>
 		</windowsSettings>
 	</application>
+	*/
 #endif
 
 

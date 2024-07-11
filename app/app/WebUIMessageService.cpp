@@ -1,7 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 #include "pch.hpp"
-#include "JsonMessageService.hpp"
 
 
 
@@ -18,22 +17,22 @@ namespace app
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-JsonMessageService::JsonMessageService():
+WebUIMessageService::WebUIMessageService():
 	_WebView{ nullptr }
 {
 }
 
-JsonMessageService::JsonMessageService(WebView* webView):
+WebUIMessageService::WebUIMessageService(WebView* webView):
 	_WebView{ webView }
 {
 }
 
-JsonMessageService::~JsonMessageService()
+WebUIMessageService::~WebUIMessageService()
 {
 }
 
 //===========================================================================
-void JsonMessageService::onRuntimeExceptionThrown(const std::wstring& message)
+void WebUIMessageService::onRuntimeExceptionThrown(const std::wstring& message)
 {
 	//------------------------------------------------------------------------
 	if (message == L"undefined")
@@ -198,7 +197,7 @@ void JsonMessageService::onRuntimeExceptionThrown(const std::wstring& message)
 
 	
 	OutputDebugStringW(oss.str().c_str());
-	::MessageBoxW(_WebView->getHandle(), oss.str().c_str(), L"RuntimeExceptionThrown", MB_OK);
+	//::MessageBoxW(_WebView->getHandle(), oss.str().c_str(), L"RuntimeExceptionThrown", MB_OK);
 
 
 	//------------------------------------------------------------------------
@@ -208,7 +207,7 @@ void JsonMessageService::onRuntimeExceptionThrown(const std::wstring& message)
 
 
 //===========================================================================
-void JsonMessageService::onWebMessage(const std::wstring& message)
+void WebUIMessageService::onWebMessage(const std::wstring& message)
 {
 	//------------------------------------------------------------------------
 	if (message == L"undefined")
@@ -221,7 +220,7 @@ void JsonMessageService::onWebMessage(const std::wstring& message)
 	onWebMessageTargetType(message);
 }
 
-bool JsonMessageService::onWebMessageTargetType(const std::wstring& message)
+bool WebUIMessageService::onWebMessageTargetType(const std::wstring& message)
 {
 	//------------------------------------------------------------------------
 	web::json::value jsonMessage = web::json::value::parse(message);
@@ -284,7 +283,7 @@ bool JsonMessageService::onWebMessageTargetType(const std::wstring& message)
 	return false;
 }
 
-bool JsonMessageService::onWebMessageTargetType0(web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType)
+bool WebUIMessageService::onWebMessageTargetType0(web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType)
 {
 	//------------------------------------------------------------------------
 	switch (jsonTarget.type())
@@ -332,13 +331,13 @@ bool JsonMessageService::onWebMessageTargetType0(web::json::value& jsonMessage, 
 		std::wstring message = target + L" : " + type;
 
 
-		::MessageBoxW(_WebView->getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
+		//::MessageBoxW(_WebView->getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
 	}
 
 	return true;
 }
 
-bool JsonMessageService::onWebMessageTargetType1(web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType)
+bool WebUIMessageService::onWebMessageTargetType1(web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType)
 {
 	//------------------------------------------------------------------------
 	web::json::value jsonTargetId;
@@ -391,14 +390,14 @@ bool JsonMessageService::onWebMessageTargetType1(web::json::value& jsonMessage, 
 	std::wstring message = targetId + L" : " + type;
 
 
-	::MessageBoxW(_WebView->getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
+	//::MessageBoxW(_WebView->getHandle(), message.c_str(), L"C++에서 이벤트 받음", MB_OK);
 
 
 	return true;
 }
 
 //===========================================================================
-void JsonMessageService::postMessage_gridUpdate(void)
+void WebUIMessageService::postMessage_gridUpdate(void)
 {
 	static int id = 100;
 
@@ -414,7 +413,7 @@ void JsonMessageService::postMessage_gridUpdate(void)
 	}
 }
 
-void JsonMessageService::postMessage_gridRecord(int no)
+void WebUIMessageService::postMessage_gridRecord(int no)
 {
 	web::json::value jsonMessage = web::json::value::parse(L"{}");
 
@@ -431,11 +430,11 @@ void JsonMessageService::postMessage_gridRecord(int no)
 	jsonMessage.serialize(stream);
 
 	
-	_WebView->ContentsWebView_postWebMessageAsJson(stream.str().c_str());
+	//_WebView->ContentsWebView_postWebMessageAsJson(stream.str().c_str());
 }
 
 //===========================================================================
-std::wstring JsonMessageService::getMessage_page1_list0_json(void)
+std::wstring WebUIMessageService::getMessage_page1_list0_json(void)
 {
 	web::json::value jsonMessage = web::json::value::parse(L"{}");
 

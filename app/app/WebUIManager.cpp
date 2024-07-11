@@ -1,7 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 #include "pch.hpp"
-#include "JsonMessageService.hpp"
 #include <wrl.h>
 
 
@@ -27,16 +26,19 @@ namespace app
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WebContentsManager::WebContentsManager()
+WebUIManager::WebUIManager(HWND hMainWindow):
+	_hMainWindow{ hMainWindow }
 {
+	registerContentsMap();
 }
 
-WebContentsManager::~WebContentsManager()
+WebUIManager::~WebUIManager()
 {
+	_WindowMap.clear();
 }
 
 //===========================================================================
-std::wstring WebContentsManager::getContentsDataFolder(void) const
+std::wstring WebUIManager::getContentsDataFolder(void) const
 {
 	WCHAR path[MAX_PATH];
 
@@ -65,7 +67,7 @@ std::wstring WebContentsManager::getContentsDataFolder(void) const
 	return dataDirectory;
 }
 
-std::wstring WebContentsManager::getContentsHost(void) const
+std::wstring WebUIManager::getContentsHost(void) const
 {
 	std::wstring host = L"https://www.code1009.com";
 
@@ -73,7 +75,7 @@ std::wstring WebContentsManager::getContentsHost(void) const
 	return host;
 }
 
-std::wstring WebContentsManager::getContentsURI(const std::wstring& urn) const
+std::wstring WebUIManager::getContentsURI(const std::wstring& urn) const
 {
 	std::wstring uri;
 
@@ -83,7 +85,7 @@ std::wstring WebContentsManager::getContentsURI(const std::wstring& urn) const
 	return uri;
 }
 
-std::wstring WebContentsManager::parseContentsURN(const std::wstring& uri) const
+std::wstring WebUIManager::parseContentsURN(const std::wstring& uri) const
 {
 	std::wstring host = getContentsHost();
 	std::wstring urn;
@@ -108,7 +110,7 @@ std::wstring WebContentsManager::parseContentsURN(const std::wstring& uri) const
 }
 
 //===========================================================================
-void WebContentsManager::registerContentsMap(void)
+void WebUIManager::registerContentsMap(void)
 {
 	//------------------------------------------------------------------------
 	std::vector<std::wstring> resourceCollection
@@ -131,7 +133,7 @@ void WebContentsManager::registerContentsMap(void)
 
 	for (std::wstring res : resourceCollection)
 	{
-		_ContentsMap.registerWebContents(res, std::make_shared<WebContentsResourceStream>(res));
+		_ContentsMap.registerContents(res, std::make_shared<WebUIContentsResourceStream>(res));
 	}
 
 	//_ContentsMap.registerWebContents(L"/favicon.ico", std::make_shared<WebContentsResourceStream>(L"favicon.ico"));
@@ -149,9 +151,67 @@ void WebContentsManager::registerContentsMap(void)
 
 	//------------------------------------------------------------------------
 	//_StartURI = getContentsURI(L"/page1/list0.json");
-	_StartURI = getContentsURI(L"/index.html");
+	//_StartURI = getContentsURI(L"/index.html");
 }
 
+WebUIContentsMap* WebUIManager::getContentsMap(void)
+{
+	return &_ContentsMap;
+}
+
+//===========================================================================
+WebUIMessageService* WebUIManager::getMessageService(void)
+{
+	return &_MessageService;
+}
+
+//===========================================================================
+void WebUIManager::newPopupWindow(HWND hParentWindow, std::wstring uri)
+{
+	auto e = std::make_shared<WebUIWindow>(this, uri, hParentWindow, true);
+
+	
+	_WindowMap[e->getHandle()] = e;
+}
+
+void WebUIManager::newChildWindow(HWND hParentWindow, std::wstring uri)
+{
+	auto e = std::make_shared<WebUIWindow>(this, uri, hParentWindow, false);
+
+
+	_WindowMap[e->getHandle()] = e;
+}
+
+void WebUIManager::deleteWindow(HWND hWindow)
+{
+	auto it = _WindowMap.find(hWindow);
+
+
+	if(it!=_WindowMap.end())
+	{
+		_WindowMap.erase(it);
+	}
+	else
+	{
+		WUI_TRACE(L"window handle not found");
+	}
+}
+
+void WebUIManager::moveWindow(HWND hParentWindow, const RECT& rect)
+{
+	HWND hParent;
+
+
+	for(auto e : _WindowMap)
+	{
+		hParent = GetParent(e.first);
+
+		if (hParent == hParentWindow)
+		{
+			wui::moveWindow(e.first, rect);
+		}
+	}
+}
 
 
 /////////////////////////////////////////////////////////////////////////////

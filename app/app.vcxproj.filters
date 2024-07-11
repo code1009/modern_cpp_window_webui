@@ -137,16 +137,16 @@
     <ClInclude Include="app\pch.hpp">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\WebContents.hpp">
+    <ClInclude Include="app\WebUIContents.hpp">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\WebContentsView.hpp">
+    <ClInclude Include="app\WebUIWindow.hpp">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\JsonMessageService.hpp">
+    <ClInclude Include="app\WebUIMessageService.hpp">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\WebContentsManager.hpp">
+    <ClInclude Include="app\WebUIManager.hpp">
       <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>
@@ -169,16 +169,16 @@
     <ClCompile Include="app\MainFrame.cpp">
       <Filter>app</Filter>
     </ClCompile>
-    <ClCompile Include="app\WebContents.cpp">
+    <ClCompile Include="app\WebUIContents.cpp">
       <Filter>app</Filter>
     </ClCompile>
-    <ClCompile Include="app\WebContentsView.cpp">
+    <ClCompile Include="app\WebUIWindow.cpp">
       <Filter>app</Filter>
     </ClCompile>
-    <ClCompile Include="app\JsonMessageService.cpp">
+    <ClCompile Include="app\WebUIMessageService.cpp">
       <Filter>app</Filter>
     </ClCompile>
-    <ClCompile Include="app\WebContentsManager.cpp">
+    <ClCompile Include="app\WebUIManager.cpp">
       <Filter>app</Filter>
     </ClCompile>
   </ItemGroup>

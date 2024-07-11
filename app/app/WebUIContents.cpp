@@ -17,12 +17,12 @@ namespace app
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WebContentsStream::WebContentsStream()
+WebUIContentsStream::WebUIContentsStream()
 {
 
 }
 
-WebContentsStream::~WebContentsStream()
+WebUIContentsStream::~WebUIContentsStream()
 {
 
 }
@@ -33,7 +33,7 @@ WebContentsStream::~WebContentsStream()
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WebContentsResourceStream::WebContentsResourceStream(const std::wstring& resourceName):
+WebUIContentsResourceStream::WebUIContentsResourceStream(const std::wstring& resourceName):
 	_ResourceName(resourceName)
 {
 	bool rv;
@@ -42,21 +42,21 @@ WebContentsResourceStream::WebContentsResourceStream(const std::wstring& resourc
 	rv = load();
 	if (false == rv)
 	{
-		throw std::wstring(L"WebContentsResourceStream ctor:" + resourceName);
+		throw std::wstring(L"WebUIContentsResourceStream ctor:" + resourceName);
 	}
 }
 
-WebContentsResourceStream::~WebContentsResourceStream()
+WebUIContentsResourceStream::~WebUIContentsResourceStream()
 {
 	unload();
 }
 
-IStream* WebContentsResourceStream::getStream(void) const
+IStream* WebUIContentsResourceStream::getStream(void) const
 { 
 	return _pStream; 
 };
 
-bool WebContentsResourceStream::load(void)
+bool WebUIContentsResourceStream::load(void)
 {
 //	LPCWSTR pType = RT_HTML;
 	LPCWSTR pType = L"WEB";
@@ -117,7 +117,7 @@ bool WebContentsResourceStream::load(void)
 	return false;
 }
 
-void WebContentsResourceStream::unload(void)
+void WebUIContentsResourceStream::unload(void)
 {
 	if (_pStream)
 	{
@@ -144,7 +144,7 @@ void WebContentsResourceStream::unload(void)
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WebContentsUTF8StringStream::WebContentsUTF8StringStream(const std::wstring& s)
+WebUIContentsUTF8StringStream::WebUIContentsUTF8StringStream(const std::wstring& s)
 {
 	_UTF8String = wcs_to_mbcs(s, CP_UTF8);
 
@@ -155,11 +155,11 @@ WebContentsUTF8StringStream::WebContentsUTF8StringStream(const std::wstring& s)
 	rv = load();
 	if (false == rv)
 	{
-		throw std::wstring(L"WebContentsUTF8StringStream ctor");
+		throw std::wstring(L"WebUIContentsUTF8StringStream ctor");
 	}
 }
 
-WebContentsUTF8StringStream::WebContentsUTF8StringStream(const std::string& s)
+WebUIContentsUTF8StringStream::WebUIContentsUTF8StringStream(const std::string& s)
 {
 	_UTF8String = mbcs_to_utf8(s, CP_ACP);
 
@@ -170,21 +170,21 @@ WebContentsUTF8StringStream::WebContentsUTF8StringStream(const std::string& s)
 	rv = load();
 	if (false == rv)
 	{
-		throw std::wstring(L"WebContentsUTF8StringStream ctor");
+		throw std::wstring(L"WebUIContentsUTF8StringStream ctor");
 	}
 }
 
-WebContentsUTF8StringStream::~WebContentsUTF8StringStream()
+WebUIContentsUTF8StringStream::~WebUIContentsUTF8StringStream()
 {
 	unload();
 }
 
-IStream* WebContentsUTF8StringStream::getStream(void) const
+IStream* WebUIContentsUTF8StringStream::getStream(void) const
 {
 	return _pStream;
 };
 
-std::wstring WebContentsUTF8StringStream::mbcs_to_wcs(std::string input, UINT codepage)
+std::wstring WebUIContentsUTF8StringStream::mbcs_to_wcs(std::string input, UINT codepage)
 {
 	int len = MultiByteToWideChar(codepage, 0, input.c_str(), -1, NULL, 0);
 
@@ -202,7 +202,7 @@ std::wstring WebContentsUTF8StringStream::mbcs_to_wcs(std::string input, UINT co
 	return std::wstring();
 }
 
-std::string WebContentsUTF8StringStream::wcs_to_mbcs(std::wstring input, UINT codepage)
+std::string WebUIContentsUTF8StringStream::wcs_to_mbcs(std::wstring input, UINT codepage)
 {
 	int len = WideCharToMultiByte(codepage, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
 
@@ -220,7 +220,7 @@ std::string WebContentsUTF8StringStream::wcs_to_mbcs(std::wstring input, UINT co
 	return std::string();
 }
 
-std::string WebContentsUTF8StringStream::utf8_to_mbcs(std::string /*input*/utf8, UINT codepage)
+std::string WebUIContentsUTF8StringStream::utf8_to_mbcs(std::string /*input*/utf8, UINT codepage)
 {
 	//	std::string  utf8 ;
 	std::wstring utf16;
@@ -234,7 +234,7 @@ std::string WebContentsUTF8StringStream::utf8_to_mbcs(std::string /*input*/utf8,
 	return mbcs;
 }
 
-std::string WebContentsUTF8StringStream::mbcs_to_utf8(std::string /*input*/mbcs, UINT codepage)
+std::string WebUIContentsUTF8StringStream::mbcs_to_utf8(std::string /*input*/mbcs, UINT codepage)
 {
 	std::string  utf8;
 	std::wstring utf16;
@@ -248,7 +248,7 @@ std::string WebContentsUTF8StringStream::mbcs_to_utf8(std::string /*input*/mbcs,
 	return utf8;
 }
 
-bool WebContentsUTF8StringStream::load(void)
+bool WebUIContentsUTF8StringStream::load(void)
 {
 	const void* ptr = _UTF8String.c_str();
 	std::size_t size = _UTF8String.size();
@@ -286,7 +286,7 @@ bool WebContentsUTF8StringStream::load(void)
 	return false;
 }
 
-void WebContentsUTF8StringStream::unload(void)
+void WebUIContentsUTF8StringStream::unload(void)
 {
 	if (_pStream)
 	{
@@ -313,28 +313,28 @@ void WebContentsUTF8StringStream::unload(void)
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WebContents::WebContents(
+WebUIContents::WebUIContents(
 	const std::wstring& URN, 
 	const std::wstring& headers, 
-	std::shared_ptr<WebContentsStream> stream):
+	std::shared_ptr<WebUIContentsStream> stream):
 	_URN(URN), 
 	_Headers(headers), 
 	_Stream(stream) 
 {
 }
 
-WebContents::~WebContents() 
+WebUIContents::~WebUIContents() 
 {
 }
 
-WebContents::WebContents(const WebContents& other):
+WebUIContents::WebUIContents(const WebUIContents& other):
 	_URN(other._URN), 
 	_Headers(other._Headers), 
 	_Stream(other._Stream) 
 {
 }
 
-WebContents& WebContents::operator=(const WebContents& other) 
+WebUIContents& WebUIContents::operator=(const WebUIContents& other) 
 {
 	if (this != &other) 
 	{
@@ -346,14 +346,14 @@ WebContents& WebContents::operator=(const WebContents& other)
 	return *this;
 }
 
-WebContents::WebContents(WebContents&& other) noexcept :
+WebUIContents::WebUIContents(WebUIContents&& other) noexcept :
 	_URN(std::move(other._URN)), 
 	_Headers(std::move(other._Headers)), 
 	_Stream(std::move(other._Stream)) 
 {
 }
 
-WebContents& WebContents::operator=(WebContents&& other) noexcept 
+WebUIContents& WebUIContents::operator=(WebUIContents&& other) noexcept 
 {
 	if (this != &other) 
 	{
@@ -365,17 +365,17 @@ WebContents& WebContents::operator=(WebContents&& other) noexcept
 	return *this;
 }
 
-std::wstring WebContents::getURN() const 
+std::wstring WebUIContents::getURN() const 
 {
 	return _URN;
 }
 
-std::wstring WebContents::getHeaders() const 
+std::wstring WebUIContents::getHeaders() const 
 {
 	return _Headers;
 }
 
-IStream* WebContents::getStream() const 
+IStream* WebUIContents::getStream() const 
 {
 	return _Stream->getStream();
 }
@@ -386,22 +386,22 @@ IStream* WebContents::getStream() const
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WebContentsExtensionMIMETypeMap::WebContentsExtensionMIMETypeMap()
+WebUIExtensionMIMETypeMap::WebUIExtensionMIMETypeMap()
 {
 	registerDefault();
 }
 
-WebContentsExtensionMIMETypeMap::~WebContentsExtensionMIMETypeMap()
+WebUIExtensionMIMETypeMap::~WebUIExtensionMIMETypeMap()
 {
 
 }
 
-WebContentsExtensionMIMETypeMap::WebContentsExtensionMIMETypeMap(const WebContentsExtensionMIMETypeMap& other) :
+WebUIExtensionMIMETypeMap::WebUIExtensionMIMETypeMap(const WebUIExtensionMIMETypeMap& other) :
 	_Container(other._Container)
 {
 }
 
-WebContentsExtensionMIMETypeMap& WebContentsExtensionMIMETypeMap::operator=(const WebContentsExtensionMIMETypeMap& other)
+WebUIExtensionMIMETypeMap& WebUIExtensionMIMETypeMap::operator=(const WebUIExtensionMIMETypeMap& other)
 {
 	if (this != &other)
 	{
@@ -411,12 +411,12 @@ WebContentsExtensionMIMETypeMap& WebContentsExtensionMIMETypeMap::operator=(cons
 	return *this;
 }
 
-WebContentsExtensionMIMETypeMap::WebContentsExtensionMIMETypeMap(WebContentsExtensionMIMETypeMap&& other) noexcept :
+WebUIExtensionMIMETypeMap::WebUIExtensionMIMETypeMap(WebUIExtensionMIMETypeMap&& other) noexcept :
 	_Container(std::move(other._Container))
 {
 }
 
-WebContentsExtensionMIMETypeMap& WebContentsExtensionMIMETypeMap::operator=(WebContentsExtensionMIMETypeMap&& other) noexcept
+WebUIExtensionMIMETypeMap& WebUIExtensionMIMETypeMap::operator=(WebUIExtensionMIMETypeMap&& other) noexcept
 {
 	if (this != &other)
 	{
@@ -426,7 +426,7 @@ WebContentsExtensionMIMETypeMap& WebContentsExtensionMIMETypeMap::operator=(WebC
 	return *this;
 }
 
-void WebContentsExtensionMIMETypeMap::registerDefault(void)
+void WebUIExtensionMIMETypeMap::registerDefault(void)
 {
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 	registertExtensionMIMEType(L".aac"    , L"audio/aac"                                                                , L"AAC audio                                                                    ");
@@ -508,12 +508,12 @@ void WebContentsExtensionMIMETypeMap::registerDefault(void)
 	registertExtensionMIMEType(L".7z"     , L"application/x-7z-compressed"                                              , L"7-zip archive                                                                ");
 }
 
-void WebContentsExtensionMIMETypeMap::registertExtensionMIMEType(const std::wstring& extension, const std::wstring& MIMEType, const std::wstring description)
+void WebUIExtensionMIMETypeMap::registertExtensionMIMEType(const std::wstring& extension, const std::wstring& MIMEType, const std::wstring description)
 {
 	_Container[extension] = std::make_pair(MIMEType, description);
 }
 
-std::wstring WebContentsExtensionMIMETypeMap::getExtensionMIMEType(const std::wstring& extension)
+std::wstring WebUIExtensionMIMETypeMap::getExtensionMIMEType(const std::wstring& extension)
 {
 	auto it = _Container.find(extension);
 
@@ -526,7 +526,7 @@ std::wstring WebContentsExtensionMIMETypeMap::getExtensionMIMEType(const std::ws
 	return L"";
 }
 
-std::wstring WebContentsExtensionMIMETypeMap::getExtensionDescription(const std::wstring& extension)
+std::wstring WebUIExtensionMIMETypeMap::getExtensionDescription(const std::wstring& extension)
 {
 	auto it = _Container.find(extension);
 
@@ -540,7 +540,7 @@ std::wstring WebContentsExtensionMIMETypeMap::getExtensionDescription(const std:
 	return L"";
 }
 
-std::wstring WebContentsExtensionMIMETypeMap::getExtension(const std::wstring& urn) const
+std::wstring WebUIExtensionMIMETypeMap::getExtension(const std::wstring& urn) const
 {
 	size_t pos = urn.find_last_of(L'.');
 
@@ -556,21 +556,21 @@ std::wstring WebContentsExtensionMIMETypeMap::getExtension(const std::wstring& u
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WebContentsMap::WebContentsMap() 
+WebUIContentsMap::WebUIContentsMap() 
 {
 }
 
-WebContentsMap::~WebContentsMap() 
+WebUIContentsMap::~WebUIContentsMap() 
 {
 }
 
-WebContentsMap::WebContentsMap(const WebContentsMap& other):
+WebUIContentsMap::WebUIContentsMap(const WebUIContentsMap& other):
 	_ExtensionMIMETypeMap(other._ExtensionMIMETypeMap), 
 	_Container(other._Container) 
 {
 }
 
-WebContentsMap& WebContentsMap::operator=(const WebContentsMap& other) 
+WebUIContentsMap& WebUIContentsMap::operator=(const WebUIContentsMap& other) 
 {
 	if (this != &other) 
 	{
@@ -581,13 +581,13 @@ WebContentsMap& WebContentsMap::operator=(const WebContentsMap& other)
 	return *this;
 }
 
-WebContentsMap::WebContentsMap(WebContentsMap&& other) noexcept:
+WebUIContentsMap::WebUIContentsMap(WebUIContentsMap&& other) noexcept:
 	_ExtensionMIMETypeMap(std::move(other._ExtensionMIMETypeMap)), 
 	_Container(std::move(other._Container)) 
 {
 }
 
-WebContentsMap& WebContentsMap::operator=(WebContentsMap&& other) noexcept 
+WebUIContentsMap& WebUIContentsMap::operator=(WebUIContentsMap&& other) noexcept 
 {
 	if (this != &other) 
 	{
@@ -598,12 +598,12 @@ WebContentsMap& WebContentsMap::operator=(WebContentsMap&& other) noexcept
 	return *this;
 }
 
-void WebContentsMap::registerWebContents(const std::wstring& urn, const std::wstring& headers, std::shared_ptr<WebContentsStream> stream) 
+void WebUIContentsMap::registerContents(const std::wstring& urn, const std::wstring& headers, std::shared_ptr<WebUIContentsStream> stream) 
 {
-	_Container[urn] = std::make_shared<WebContents>(urn, headers, stream);
+	_Container[urn] = std::make_shared<WebUIContents>(urn, headers, stream);
 }
 
-void WebContentsMap::registerWebContents(const std::wstring& urn, std::shared_ptr<WebContentsStream> stream) 
+void WebUIContentsMap::registerContents(const std::wstring& urn, std::shared_ptr<WebUIContentsStream> stream) 
 {
 	std::wstring extension;
 	std::wstring headers;
@@ -622,10 +622,10 @@ void WebContentsMap::registerWebContents(const std::wstring& urn, std::shared_pt
 		headers = L"Content-Type: application/x-binary";
 	}
 
-	_Container[urn] = std::make_shared<WebContents>(urn, headers, stream);
+	_Container[urn] = std::make_shared<WebUIContents>(urn, headers, stream);
 }
 
-WebContents* WebContentsMap::find(const std::wstring& urn) 
+WebUIContents* WebUIContentsMap::findContents(const std::wstring& urn)
 {
 	auto it = _Container.find(urn);
 

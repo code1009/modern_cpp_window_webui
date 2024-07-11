@@ -15,11 +15,11 @@ namespace app
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-class WebContentsStream
+class WebUIContentsStream
 {
 public:
-	WebContentsStream();
-	virtual ~WebContentsStream();
+	WebUIContentsStream();
+	virtual ~WebUIContentsStream();
 
 public:
 	virtual IStream* getStream(void) const = 0;
@@ -31,7 +31,7 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-class WebContentsResourceStream final : public WebContentsStream
+class WebUIContentsResourceStream final : public WebUIContentsStream
 {
 private:
 	std::wstring _ResourceName{ };
@@ -44,15 +44,15 @@ private:
 	IStream* _pStream{ nullptr };
 
 public:
-	explicit WebContentsResourceStream(const std::wstring& resourceName);
-	virtual ~WebContentsResourceStream();
+	explicit WebUIContentsResourceStream(const std::wstring& resourceName);
+	virtual ~WebUIContentsResourceStream();
 
 public:
-	WebContentsResourceStream(const WebContentsResourceStream&) = delete;
-	WebContentsResourceStream& operator=(const WebContentsResourceStream&) = delete;
+	WebUIContentsResourceStream(const WebUIContentsResourceStream&) = delete;
+	WebUIContentsResourceStream& operator=(const WebUIContentsResourceStream&) = delete;
 
-	WebContentsResourceStream(WebContentsResourceStream&&) = delete;
-	WebContentsResourceStream& operator=(WebContentsResourceStream&&) = delete;
+	WebUIContentsResourceStream(WebUIContentsResourceStream&&) = delete;
+	WebUIContentsResourceStream& operator=(WebUIContentsResourceStream&&) = delete;
 
 public:
 	virtual IStream* getStream(void) const override;
@@ -68,7 +68,7 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-class WebContentsUTF8StringStream final : public WebContentsStream
+class WebUIContentsUTF8StringStream final : public WebUIContentsStream
 {
 private:
 	std::string _UTF8String{ };
@@ -80,25 +80,25 @@ private:
 	IStream* _pStream{ nullptr };
 
 public:
-	explicit WebContentsUTF8StringStream(const std::wstring& s);
-	explicit WebContentsUTF8StringStream(const std::string& s);
-	virtual ~WebContentsUTF8StringStream();
+	explicit WebUIContentsUTF8StringStream(const std::wstring& s);
+	explicit WebUIContentsUTF8StringStream(const std::string& s);
+	virtual ~WebUIContentsUTF8StringStream();
 
 public:
-	WebContentsUTF8StringStream(const WebContentsUTF8StringStream&) = delete;
-	WebContentsResourceStream& operator=(const WebContentsUTF8StringStream&) = delete;
+	WebUIContentsUTF8StringStream(const WebUIContentsUTF8StringStream&) = delete;
+	WebUIContentsResourceStream& operator=(const WebUIContentsUTF8StringStream&) = delete;
 
-	WebContentsUTF8StringStream(WebContentsUTF8StringStream&&) = delete;
-	WebContentsUTF8StringStream& operator=(WebContentsUTF8StringStream&&) = delete;
+	WebUIContentsUTF8StringStream(WebUIContentsUTF8StringStream&&) = delete;
+	WebUIContentsUTF8StringStream& operator=(WebUIContentsUTF8StringStream&&) = delete;
 
 public:
 	virtual IStream* getStream(void) const override;
 
 public:
 	std::wstring mbcs_to_wcs(std::string input, UINT codepage);
-	std::string wcs_to_mbcs(std::wstring input, UINT codepage);
-	std::string utf8_to_mbcs(std::string /*input*/utf8, UINT codepage);
-	std::string mbcs_to_utf8(std::string /*input*/mbcs, UINT codepage);
+	std::string  wcs_to_mbcs(std::wstring input, UINT codepage);
+	std::string  utf8_to_mbcs(std::string /*input*/utf8, UINT codepage);
+	std::string  mbcs_to_utf8(std::string /*input*/mbcs, UINT codepage);
 
 private:
 	bool load(void);
@@ -111,23 +111,23 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-class WebContents final
+class WebUIContents final
 {
 private:
 	std::wstring _URN{};
 	std::wstring _Headers{};
-	std::shared_ptr<WebContentsStream> _Stream{};
+	std::shared_ptr<WebUIContentsStream> _Stream{};
 
 public:
-	explicit WebContents(const std::wstring& URN, const std::wstring& headers, std::shared_ptr<WebContentsStream> stream);
-	~WebContents();
+	explicit WebUIContents(const std::wstring& URN, const std::wstring& headers, std::shared_ptr<WebUIContentsStream> stream);
+	~WebUIContents();
 
 public:
-	WebContents(const WebContents& other);
-	WebContents& operator=(const WebContents& other);
+	WebUIContents(const WebUIContents& other);
+	WebUIContents& operator=(const WebUIContents& other);
 
-	WebContents(WebContents&& other) noexcept;
-	WebContents& operator=(WebContents&& other) noexcept;
+	WebUIContents(WebUIContents&& other) noexcept;
+	WebUIContents& operator=(WebUIContents&& other) noexcept;
 
 public:
 	std::wstring getURN    (void) const;
@@ -141,25 +141,25 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-class WebContentsExtensionMIMETypeMap final
+class WebUIExtensionMIMETypeMap final
 {
-public:
+private:
 	std::map<std::wstring, std::pair<std::wstring, std::wstring>> _Container{};
 
 
 	//-------------------------------------------------------------------------
 public:
-	WebContentsExtensionMIMETypeMap();
-	~WebContentsExtensionMIMETypeMap();
+	WebUIExtensionMIMETypeMap();
+	~WebUIExtensionMIMETypeMap();
 
 
 	//-------------------------------------------------------------------------
 public:
-	WebContentsExtensionMIMETypeMap(const WebContentsExtensionMIMETypeMap& other);
-	WebContentsExtensionMIMETypeMap& operator=(const WebContentsExtensionMIMETypeMap& other);
+	WebUIExtensionMIMETypeMap(const WebUIExtensionMIMETypeMap& other);
+	WebUIExtensionMIMETypeMap& operator=(const WebUIExtensionMIMETypeMap& other);
 
-	WebContentsExtensionMIMETypeMap(WebContentsExtensionMIMETypeMap&& other) noexcept;
-	WebContentsExtensionMIMETypeMap& operator=(WebContentsExtensionMIMETypeMap&& other) noexcept;
+	WebUIExtensionMIMETypeMap(WebUIExtensionMIMETypeMap&& other) noexcept;
+	WebUIExtensionMIMETypeMap& operator=(WebUIExtensionMIMETypeMap&& other) noexcept;
 
 
 	//-------------------------------------------------------------------------
@@ -187,35 +187,35 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-class WebContentsMap final
+class WebUIContentsMap final
 {
 private:
-	WebContentsExtensionMIMETypeMap _ExtensionMIMETypeMap{};
-	std::map< std::wstring, std::shared_ptr<WebContents>> _Container{};
+	WebUIExtensionMIMETypeMap _ExtensionMIMETypeMap{};
+	std::map< std::wstring, std::shared_ptr<WebUIContents>> _Container{};
 
 
 	//-------------------------------------------------------------------------
 public:
-	WebContentsMap();
-	~WebContentsMap();
+	WebUIContentsMap();
+	~WebUIContentsMap();
 
 
 	//-------------------------------------------------------------------------
 public:
-	WebContentsMap(const WebContentsMap& other);
-	WebContentsMap& operator=(const WebContentsMap& other);
+	WebUIContentsMap(const WebUIContentsMap& other);
+	WebUIContentsMap& operator=(const WebUIContentsMap& other);
 
-	WebContentsMap(WebContentsMap&& other) noexcept;
-	WebContentsMap& operator=(WebContentsMap&& other) noexcept;
+	WebUIContentsMap(WebUIContentsMap&& other) noexcept;
+	WebUIContentsMap& operator=(WebUIContentsMap&& other) noexcept;
 
 
 	//-------------------------------------------------------------------------
 public:
-	void registerWebContents(const std::wstring& urn, const std::wstring& headers, std::shared_ptr<WebContentsStream> stream);
-	void registerWebContents(const std::wstring& urn, std::shared_ptr<WebContentsStream> stream);
+	void registerContents(const std::wstring& urn, const std::wstring& headers, std::shared_ptr<WebUIContentsStream> stream);
+	void registerContents(const std::wstring& urn, std::shared_ptr<WebUIContentsStream> stream);
 
 public:
-	WebContents* find(const std::wstring& urn);
+	WebUIContents* findContents(const std::wstring& urn);
 };
 
 

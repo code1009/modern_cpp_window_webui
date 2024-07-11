@@ -50,12 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\AboutDialog.hpp" />
-    <ClInclude Include="app\JsonMessageService.hpp" />
+    <ClInclude Include="app\WebUIMessageService.hpp" />
     <ClInclude Include="app\MainFrame.hpp" />
     <ClInclude Include="app\pch.hpp" />
-    <ClInclude Include="app\WebContents.hpp" />
-    <ClInclude Include="app\WebContentsManager.hpp" />
-    <ClInclude Include="app\WebContentsView.hpp" />
+    <ClInclude Include="app\WebUIContents.hpp" />
+    <ClInclude Include="app\WebUIManager.hpp" />
+    <ClInclude Include="app\WebUIWindow.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.hpp" />
     <ClInclude Include="res\Resource.h" />
@@ -65,12 +65,12 @@
     <ClInclude Include="wui\WindowMessageManipulator.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="app\JsonMessageService.cpp" />
+    <ClCompile Include="app\WebUIMessageService.cpp" />
     <ClCompile Include="app\main.cpp" />
     <ClCompile Include="app\MainFrame.cpp" />
-    <ClCompile Include="app\WebContents.cpp" />
-    <ClCompile Include="app\WebContentsManager.cpp" />
-    <ClCompile Include="app\WebContentsView.cpp" />
+    <ClCompile Include="app\WebUIContents.cpp" />
+    <ClCompile Include="app\WebUIManager.cpp" />
+    <ClCompile Include="app\WebUIWindow.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>

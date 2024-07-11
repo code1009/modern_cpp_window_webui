@@ -21,21 +21,23 @@ class WebView;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-class JsonMessageService
+class WebUIMessageService
 {
 public:
 	WebView* _WebView{ nullptr };
 
 public:
-	JsonMessageService();
-	explicit JsonMessageService(WebView* webView);
-	virtual ~JsonMessageService();
+	WebUIMessageService();
+	explicit WebUIMessageService(WebView* webView);
+	virtual ~WebUIMessageService();
 
 public:
 	void onRuntimeExceptionThrown(const std::wstring& message);
 
 public:
 	void onWebMessage(const std::wstring& message);
+
+private:
 	bool onWebMessageTargetType(const std::wstring& message);
 	bool onWebMessageTargetType0(web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType);
 	bool onWebMessageTargetType1(web::json::value& jsonMessage, web::json::value& jsonTarget, web::json::value& jsonType);

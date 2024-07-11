@@ -42,11 +42,8 @@ MainFrame::MainFrame()
 
 
 	//-----------------------------------------------------------------------
-	std::shared_ptr<Window> view;
-
-
-	view = std::make_shared<WebView>(getHandle());
-	_View = view;
+	_WebUIManager = std::make_shared<WebUIManager>(getHandle());
+	_WebUIManager->newChildWindow(getHandle(), _WebUIManager->getContentsURI(L"/index.html"));
 
 
 	//-----------------------------------------------------------------------
@@ -114,7 +111,8 @@ void MainFrame::onSize(wui::WindowMessage& windowMessage)
 
 
 	GetClientRect(getHandle(), &rect);
-	wui::moveWindow(_View.get(), rect);
+
+	_WebUIManager->moveWindow(getHandle(), rect);
 }
 
 void MainFrame::onCommand(wui::WindowMessage& windowMessage)
@@ -167,12 +165,12 @@ void MainFrame::onExit(wui::WindowMessage& windowMessage)
 
 void MainFrame::onTest1(wui::WindowMessage& windowMessage)
 {
-	sendMessage(_View.get(), windowMessage);
+	//sendMessage(_View.get(), windowMessage);
 }
 
 void MainFrame::onTest2(wui::WindowMessage& windowMessage)
 {
-	sendMessage(_View.get(), windowMessage);
+	//sendMessage(_View.get(), windowMessage);
 }
 
 

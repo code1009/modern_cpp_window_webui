@@ -18,7 +18,7 @@ namespace app
 class MainFrame : public wui::BasicWindow
 {
 public:
-	std::shared_ptr<Window> _View;
+	std::shared_ptr<WebUIManager> _WebUIManager;
 
 public:
 	MainFrame();
