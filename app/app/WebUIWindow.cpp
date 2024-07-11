@@ -58,7 +58,7 @@ WebUIWindow::WebUIWindow(WebUIManager* manager, std::wstring uri, HWND hParentWi
 		rect.left = 0;
 		rect.top = 0;
 		rect.right = 800;
-		rect.bottom = 500;
+		rect.bottom = 600;
 	}
 
 
@@ -121,7 +121,7 @@ void WebUIWindow::registerWindowMessageHandler(void)
 void WebUIWindow::onCreate(wui::WindowMessage& windowMessage)
 {
 	//-----------------------------------------------------------------------
-	//SetWindowTextW(windowMessage.hWnd, L"WebView");
+	//SetWindowTextW(windowMessage.hWnd, L"WebUIWindow");
 
 
 	defaultWindowMessageHandler(windowMessage);
@@ -129,31 +129,36 @@ void WebUIWindow::onCreate(wui::WindowMessage& windowMessage)
 
 void WebUIWindow::onDestory(wui::WindowMessage& windowMessage)
 {
-	WUI_TRACE(L"WebUIWindow::onDestory-begin");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"begin");
 
 
+	//-----------------------------------------------------------------------
 	WUI_TRACE(L"destroyWebView-begin");
 	destroyWebView();
 	WUI_TRACE(L"destroyWebView-end");
 
+
+	//-----------------------------------------------------------------------
 	_Manager->onDestroyWindow(getHandle());
 
 
-	WUI_TRACE(L"WebUIWindow::onDestory-end");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"end");
 }
 
 void WebUIWindow::onClose(wui::WindowMessage& windowMessage)
 {
-	WUI_TRACE(L"WebUIWindow::onClose-begin");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"begin");
 	
 	
-	//	_Manager->deleteWindow(getHandle());
+	//-----------------------------------------------------------------------
 	destroyWindow();
 
-	defaultWindowMessageHandler(windowMessage);
 
-
-	WUI_TRACE(L"WebUIWindow::onClose-end");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"end");
 }
 
 void WebUIWindow::onSize(wui::WindowMessage& windowMessage)

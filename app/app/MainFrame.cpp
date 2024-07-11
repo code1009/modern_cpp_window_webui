@@ -92,26 +92,30 @@ void MainFrame::onCreate(wui::WindowMessage& windowMessage)
 
 void MainFrame::onDestory(wui::WindowMessage& windowMessage)
 {
-	WUI_TRACE(L"MainFrame::onDestory-begin");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"begin");
 
 
 	//-----------------------------------------------------------------------
 	::PostQuitMessage(0);
 
 
-	WUI_TRACE(L"MainFrame::onDestory-end");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"end");
 }
 
 void MainFrame::onClose(wui::WindowMessage& windowMessage)
 {
-	WUI_TRACE(L"MainFrame::onClose-begin");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"begin");
 
 
 	//-----------------------------------------------------------------------
 	destroyWindow();
 
 
-	WUI_TRACE(L"MainFrame::onClose-end");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"end");
 }
 
 void MainFrame::onSize(wui::WindowMessage& windowMessage)
@@ -189,11 +193,16 @@ void MainFrame::onTest2(wui::WindowMessage& windowMessage)
 
 void MainFrame::onUser0(wui::WindowMessage& windowMessage)
 {
-	WUI_TRACE(L"MainFrame::onUser0-begin");
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"begin");
 
+
+	//-----------------------------------------------------------------------
 	_WebUIManager->deleteWindow((HWND)windowMessage.wParam);
 
-	WUI_TRACE(L"MainFrame::onUser0-end");
+
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"end");
 }
 
 
