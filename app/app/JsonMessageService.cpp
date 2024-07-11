@@ -18,6 +18,11 @@ namespace app
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+JsonMessageService::JsonMessageService():
+	_WebView{ nullptr }
+{
+}
+
 JsonMessageService::JsonMessageService(WebView* webView):
 	_WebView{ webView }
 {

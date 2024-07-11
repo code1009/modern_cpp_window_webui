@@ -58,6 +58,7 @@
 #include "app/AboutDialog.hpp"
 #include "app/MainFrame.hpp"
 
+#include "app/JsonMessageService.hpp"
 #include "app/WebContents.hpp"
 #include "app/WebContentsView.hpp"
 #include "app/WebContentsManager.hpp"
