@@ -36,6 +36,17 @@ WebUIManager::WebUIManager(HWND hMainWindow):
 
 WebUIManager::~WebUIManager()
 {
+	//-------------------------------------------------------------------------
+	std::wostringstream oss;
+
+
+	oss << L"_WindowMap.size() = ";
+	oss << _WindowMap.size();
+
+	WUI_TRACE(oss.str().c_str());
+
+
+	//-------------------------------------------------------------------------
 	_WindowMap.clear();
 }
 

@@ -106,6 +106,15 @@ WebUIWindow::WebUIWindow(WebUIManager* manager, std::wstring uri, HWND hParentWi
 
 WebUIWindow::~WebUIWindow()
 {
+	//-------------------------------------------------------------------------
+	std::wostringstream oss;
+
+
+	oss << L"getHandle() = ";
+	oss << getHandle();
+
+
+	WUI_TRACE(oss.str().c_str());
 }
 
 void WebUIWindow::registerWindowMessageHandler(void)
@@ -113,6 +122,8 @@ void WebUIWindow::registerWindowMessageHandler(void)
 	getWindowMessageHandler(WM_CREATE) = [this](wui::WindowMessage& windowMessage) { onCreate(windowMessage); };
 	getWindowMessageHandler(WM_DESTROY) = [this](wui::WindowMessage& windowMessage) { onDestory(windowMessage); };
 	getWindowMessageHandler(WM_CLOSE) = [this](wui::WindowMessage& windowMessage) { onClose(windowMessage); };
+	getWindowMessageHandler(WM_NCDESTROY) = [this](wui::WindowMessage& windowMessage) { onNcDestory(windowMessage); };
+
 	getWindowMessageHandler(WM_SIZE) = [this](wui::WindowMessage& windowMessage) { onSize(windowMessage); };
 	getWindowMessageHandler(WM_DPICHANGED) = [this](wui::WindowMessage& windowMessage) { onDPIChanged(windowMessage); };
 	getWindowMessageHandler(WM_COMMAND) = [this](wui::WindowMessage& windowMessage) { onCommand(windowMessage); };
@@ -155,6 +166,19 @@ void WebUIWindow::onClose(wui::WindowMessage& windowMessage)
 	
 	//-----------------------------------------------------------------------
 	destroyWindow();
+
+
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"end");
+}
+
+void WebUIWindow::onNcDestory(wui::WindowMessage& windowMessage)
+{
+	//-----------------------------------------------------------------------
+	WUI_TRACE(L"begin");
+
+
+	//-----------------------------------------------------------------------
 
 
 	//-----------------------------------------------------------------------

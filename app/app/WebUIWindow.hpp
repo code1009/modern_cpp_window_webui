@@ -76,6 +76,7 @@ public:
 	void onCreate(wui::WindowMessage& windowMessage);
 	void onDestory(wui::WindowMessage& windowMessage);
 	void onClose(wui::WindowMessage& windowMessage);
+	void onNcDestory(wui::WindowMessage& windowMessage);
 
 	void onSize(wui::WindowMessage& windowMessage);
 	void onDPIChanged(wui::WindowMessage& windowMessage);

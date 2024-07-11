@@ -424,6 +424,14 @@ Window::Window()
 
 Window::~Window()
 {
+	HWND handle;
+
+
+	handle = getHandle();
+	if (nullptr != handle)
+	{
+		WUI_TRACE(L"window handle is not nullptr!");
+	}
 }
 
 HWND Window::getHandle(void) const
@@ -704,12 +712,17 @@ HWND BasicWindow::createWindow(
 void BasicWindow::destroyWindow(void)
 {
 	HWND handle;
+	BOOL rv;
 
 
 	handle = getHandle();
 	if (handle)
 	{
-		::DestroyWindow(handle);
+		rv = ::DestroyWindow(handle);
+		if(FALSE == rv)
+		{
+			WUI_TRACE(L"DestroyWindow() failed");
+		}
 	}
 
 	setHandle(nullptr);
