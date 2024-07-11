@@ -112,6 +112,10 @@ void MainFrame::onClose(wui::WindowMessage& windowMessage)
 
 	//-----------------------------------------------------------------------
 	_WebUIManager->deleteAndDestroyAllWindows();
+	_WebUIManager.reset();
+
+
+	//-----------------------------------------------------------------------
 	destroyWindow();
 
 
