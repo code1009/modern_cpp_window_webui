@@ -215,6 +215,7 @@ void WebUIWindow::onCommand(wui::WindowMessage& windowMessage)
 {
 	wui::WM_COMMAND_WindowMessageManipulator windowMessageManipulator(&windowMessage);
 
+
 /*
 	switch (windowMessageManipulator.nID())
 	{
@@ -318,13 +319,13 @@ HRESULT WebUIWindow::createWebView_Controller(void)
 	hr = _WebView_Environment->CreateCoreWebView2Controller(
 		getHandle(),
 		Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>
-			(this, &WebUIWindow::onWebView_ControllerCompleted).Get()
+			(this, &WebUIWindow::onWebView_Controller_Completed).Get()
 	);
 
 	return hr;
 }
 
-HRESULT WebUIWindow::onWebView_ControllerCompleted(HRESULT errorCode, ICoreWebView2Controller* createdController)
+HRESULT WebUIWindow::onWebView_Controller_Completed(HRESULT errorCode, ICoreWebView2Controller* createdController)
 {
 	RETURN_IF_FAILED(errorCode);
 

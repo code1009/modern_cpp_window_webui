@@ -101,7 +101,7 @@ public:
 	//-------------------------------------------------------------------------
 public:
 	HRESULT createWebView_Controller         (void);
-	HRESULT     onWebView_ControllerCompleted(HRESULT errorCode, ICoreWebView2Controller* createdController);
+	HRESULT     onWebView_Controller_Completed(HRESULT errorCode, ICoreWebView2Controller* createdController);
 
 	HRESULT resizeWebView_Controller(void);
 	HRESULT  setupWebView_Controller(void);
