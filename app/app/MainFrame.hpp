@@ -40,6 +40,8 @@ public:
 	void onExit(wui::WindowMessage& windowMessage);
 	void onTest1(wui::WindowMessage& windowMessage);
 	void onTest2(wui::WindowMessage& windowMessage);
+
+	void onUser0(wui::WindowMessage& windowMessage);
 };
 
 

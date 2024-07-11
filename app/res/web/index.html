@@ -74,7 +74,17 @@
 					contentsPostMessage(jsonMessage);
 				}
 		);
-	
+
+		target = document.getElementById("button2");
+		target.addEventListener(
+			"click", 
+			(e) => 
+				{
+                    var win = window.open("/page1/list0.json", "PopupWin", "width=500,height=600");
+                }
+        );
+
+
 	</script>
 
 </body>

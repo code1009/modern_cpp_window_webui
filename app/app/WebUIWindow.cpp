@@ -57,8 +57,8 @@ WebUIWindow::WebUIWindow(WebUIManager* manager, std::wstring uri, HWND hParentWi
 	{
 		rect.left = 0;
 		rect.top = 0;
-		rect.right = 0;
-		rect.bottom = 0;
+		rect.right = 800;
+		rect.bottom = 500;
 	}
 
 
@@ -129,15 +129,31 @@ void WebUIWindow::onCreate(wui::WindowMessage& windowMessage)
 
 void WebUIWindow::onDestory(wui::WindowMessage& windowMessage)
 {
+	WUI_TRACE(L"WebUIWindow::onDestory-begin");
+
+
 	WUI_TRACE(L"destroyWebView-begin");
 	destroyWebView();
 	WUI_TRACE(L"destroyWebView-end");
 
 	_Manager->onDestroyWindow(getHandle());
+
+
+	WUI_TRACE(L"WebUIWindow::onDestory-end");
 }
 
 void WebUIWindow::onClose(wui::WindowMessage& windowMessage)
 {
+	WUI_TRACE(L"WebUIWindow::onClose-begin");
+	
+	
+	//	_Manager->deleteWindow(getHandle());
+	destroyWindow();
+
+	defaultWindowMessageHandler(windowMessage);
+
+
+	WUI_TRACE(L"WebUIWindow::onClose-end");
 }
 
 void WebUIWindow::onSize(wui::WindowMessage& windowMessage)
@@ -252,8 +268,9 @@ HRESULT WebUIWindow::onWebView_Environment_Completed(HRESULT errorCode, ICoreWeb
 
 void WebUIWindow::destroyWebView(void)
 {
-	//_WebViewController->Release(); DO NOT CALL!!!
-	//_WebViewEnvironment->Release();
+	//_WebView->Release(); DO NOT CALL!!!
+	//_WebView_Controller->Release(); DO NOT CALL!!!
+	_WebView_Environment->Release();
 }
 
 //===========================================================================
@@ -437,8 +454,8 @@ HRESULT WebUIWindow::setupWebView(void)
 	hr = setupWebView_NavigationCompleted();
 	RETURN_IF_FAILED(hr);
 
-	//hr = setupWebView_NewWindowRequested();
-	//RETURN_IF_FAILED(hr);
+	hr = setupWebView_NewWindowRequested();
+	RETURN_IF_FAILED(hr);
 
 
 	//-----------------------------------------------------------------------
@@ -861,6 +878,92 @@ HRESULT WebUIWindow::onWebView_NewWindowRequested(ICoreWebView2* sender, ICoreWe
 
 
 	//-----------------------------------------------------------------------
+	wil::com_ptr<ICoreWebView2WindowFeatures> windowFeatures;
+
+
+	hr = args->get_WindowFeatures(&windowFeatures);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	BOOL hasPosition = FALSE;
+	BOOL hasSize = FALSE;
+	UINT32 left = 0;
+	UINT32 top = 0;
+	UINT32 height = 0;
+	UINT32 width = 0;
+	BOOL shouldHaveToolbar = true;
+
+
+	hr = windowFeatures->get_HasPosition(&hasPosition);
+	RETURN_IF_FAILED(hr);
+
+	hr = windowFeatures->get_HasSize(&hasSize);
+	RETURN_IF_FAILED(hr);
+
+	if (hasPosition)
+	{
+		hr = windowFeatures->get_Left(&left);
+		RETURN_IF_FAILED(hr);
+
+		hr = windowFeatures->get_Top(&top);
+		RETURN_IF_FAILED(hr);
+	}
+	else
+	{
+		left = 0;
+		top = 0;
+	}
+
+	static constexpr int s_minNewWindowSize = 100;
+	if (hasSize)
+	{
+		hr = windowFeatures->get_Height(&height);
+		RETURN_IF_FAILED(hr);
+		hr = windowFeatures->get_Width(&width);
+		RETURN_IF_FAILED(hr);
+	}
+	else
+	{
+		width = s_minNewWindowSize;
+		height = s_minNewWindowSize;
+	}
+
+	hr = windowFeatures->get_ShouldDisplayToolbar(&shouldHaveToolbar);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	RECT windowRect = { 0 };
+
+
+	windowRect.left = left;
+	windowRect.top = top;
+
+	windowRect.right = left + width;
+	windowRect.bottom = top + height;
+
+
+	//-----------------------------------------------------------------------
+	wil::unique_cotaskmem_string ucsUri;
+
+
+	hr = args->get_Uri(&ucsUri);
+	RETURN_IF_FAILED(hr);
+
+
+	//-----------------------------------------------------------------------
+	std::shared_ptr<WebUIWindow> newWindow = _Manager->newPopupWindow(getHandle(), ucsUri.get(), windowRect);
+
+
+	//-----------------------------------------------------------------------
+	args->put_NewWindow(newWindow->_WebView.get());
+
+	args->put_Handled(TRUE);
+
+
+#if 0
+	//-----------------------------------------------------------------------
 	wil::com_ptr<ICoreWebView2> senderWebView;
 	wil::com_ptr<ICoreWebView2_2> webView;
 	wil::com_ptr<ICoreWebView2Environment> environment;
@@ -875,17 +978,18 @@ HRESULT WebUIWindow::onWebView_NewWindowRequested(ICoreWebView2* sender, ICoreWe
 	RETURN_IF_FAILED(hr);
 
 
+	//-----------------------------------------------------------------------
 	hr = environment->CreateCoreWebView2Controller(
-		nullptr, // 새 창을 호스팅할 부모 윈도우 핸들
+		getHandle(), // 새 창을 호스팅할 부모 윈도우 핸들
 		Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
-			[args](HRESULT result, ICoreWebView2Controller* controller) -> HRESULT
+			[this](HRESULT errorCode, ICoreWebView2Controller* createdController) -> HRESULT
 			{
-				if (controller != nullptr)
+				if (createdController != nullptr)
 				{
 					wil::com_ptr<ICoreWebView2> newWebView;
 
 
-					controller->get_CoreWebView2(&newWebView);
+					createdController->get_CoreWebView2(&newWebView);
 
 					// 새 창에 대한 설정을 여기에서 수행할 수 있습니다.
 					// 예: newWebView->Navigate(L"https://example.com");
@@ -901,6 +1005,7 @@ HRESULT WebUIWindow::onWebView_NewWindowRequested(ICoreWebView2* sender, ICoreWe
 		).Get()
 	);
 	RETURN_IF_FAILED(hr);
+#endif
 
 
 	return S_OK;

@@ -58,11 +58,11 @@ public:
 
 	//-------------------------------------------------------------------------
 public:
-	void newPopupWindow(HWND hParentWindow, std::wstring uri);
-	void newChildWindow(HWND hParentWindow, std::wstring uri);
+	std::shared_ptr<WebUIWindow> newPopupWindow(HWND hParentWindow, std::wstring uri);
+	std::shared_ptr<WebUIWindow> newPopupWindow(HWND hParentWindow, std::wstring uri, const RECT& rect);
+	std::shared_ptr<WebUIWindow> newChildWindow(HWND hParentWindow, std::wstring uri);
 	void onDestroyWindow(HWND hWindow);
 	void deleteWindow(HWND hWindow);
-	void deleteAndDestroyAllWindow(void);
 
 	void moveWindow(HWND hParentWindow, const RECT& rect);
 };

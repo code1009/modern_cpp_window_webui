@@ -162,20 +162,40 @@ WebUIMessageService* WebUIManager::getMessageService(void)
 }
 
 //===========================================================================
-void WebUIManager::newPopupWindow(HWND hParentWindow, std::wstring uri)
+std::shared_ptr<WebUIWindow> WebUIManager::newPopupWindow(HWND hParentWindow, std::wstring uri)
 {
 	auto e = std::make_shared<WebUIWindow>(this, uri, hParentWindow, true);
 
 	
 	_WindowMap[e->getHandle()] = e;
+
+
+	return e;
 }
 
-void WebUIManager::newChildWindow(HWND hParentWindow, std::wstring uri)
+std::shared_ptr<WebUIWindow> WebUIManager::newPopupWindow(HWND hParentWindow, std::wstring uri, const RECT& rect)
+{
+	auto e = std::make_shared<WebUIWindow>(this, uri, hParentWindow, true);
+
+	
+	wui::moveWindow(e->getHandle(), rect);
+
+
+	_WindowMap[e->getHandle()] = e;
+
+
+	return e;
+}
+
+std::shared_ptr<WebUIWindow> WebUIManager::newChildWindow(HWND hParentWindow, std::wstring uri)
 {
 	auto e = std::make_shared<WebUIWindow>(this, uri, hParentWindow, false);
 
 
 	_WindowMap[e->getHandle()] = e;
+
+
+	return e;
 }
 
 void WebUIManager::deleteWindow(HWND hWindow)
@@ -185,8 +205,6 @@ void WebUIManager::deleteWindow(HWND hWindow)
 
 	if(it!=_WindowMap.end())
 	{
-		(*it).second->destroyWindow();
-
 		_WindowMap.erase(it);
 	}
 	else
@@ -197,30 +215,7 @@ void WebUIManager::deleteWindow(HWND hWindow)
 
 void WebUIManager::onDestroyWindow(HWND hWindow)
 {
-	auto it = _WindowMap.find(hWindow);
-
-
-	if (it != _WindowMap.end())
-	{
-		if ((*it).second->isPopupWindow())
-		{
-			_WindowMap.erase(it);
-		}
-	}
-	else
-	{
-		WUI_TRACE(L"window handle not found");
-	}
-}
-
-void WebUIManager::deleteAndDestroyAllWindow(void)
-{
-	for(auto e : _WindowMap)
-	{
-		e.second->destroyWindow();
-	}
-
-	_WindowMap.clear();
+	::PostMessage(_hMainWindow, WM_USER + 0, (WPARAM)hWindow, 0);
 }
 
 void WebUIManager::moveWindow(HWND hParentWindow, const RECT& rect)

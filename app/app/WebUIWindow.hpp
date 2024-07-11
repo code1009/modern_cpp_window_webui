@@ -26,7 +26,7 @@ class WebUIManager;
 class WebUIWindow : public wui::BasicWindow
 {
 	//-------------------------------------------------------------------------
-private:
+public:
 	WebUIManager* _Manager{ nullptr };
 	std::wstring  _URI{ };
 	bool          _PopupWindowStyle{ false };
