@@ -51,6 +51,7 @@ Instance::Instance():
 {
 }
 
+//===========================================================================
 HINSTANCE Instance::getHandle(void) const
 {
 	return _Handle;
@@ -67,6 +68,7 @@ HINSTANCE Instance::setHandle(HINSTANCE handle)
 	return _Handle;
 }
 
+//===========================================================================
 std::wstring Instance::loadString(int id)
 {
 	LPWSTR ptr;
@@ -97,6 +99,7 @@ std::wstring Instance::loadString(int id)
 	return s;
 }
 
+//===========================================================================
 HCURSOR Instance::loadCursor(int id)
 {
 	return loadCursor(makeIntResource(id));
@@ -117,6 +120,7 @@ HACCEL Instance::loadAccelerators(int id)
 	return loadAccelerators(makeIntResource(id));
 }
 
+//===========================================================================
 HCURSOR Instance::loadCursor(LPCWSTR id)
 {
 	return ::LoadCursorW(getHandle(), id);
@@ -124,7 +128,7 @@ HCURSOR Instance::loadCursor(LPCWSTR id)
 
 HICON Instance::loadIcon(LPCWSTR id)
 {
-	return ::LoadIcon(getHandle(), id);
+	return ::LoadIconW(getHandle(), id);
 }
 
 HBITMAP Instance::loadBitmap(LPCWSTR id)
@@ -137,6 +141,7 @@ HACCEL Instance::loadAccelerators(LPCWSTR id)
 	return ::LoadAcceleratorsW(getHandle(), id);
 }
 
+//===========================================================================
 LPCWSTR Instance::makeIntResource(int id)
 {
 	return MAKEINTRESOURCE(id);
