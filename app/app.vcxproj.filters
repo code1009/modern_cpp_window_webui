@@ -84,6 +84,9 @@
     <None Include="res\web\onload.js">
       <Filter>res\web</Filter>
     </None>
+    <None Include="wui\wui.md">
+      <Filter>wui</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\app.ico">

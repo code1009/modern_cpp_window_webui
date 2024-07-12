@@ -36,6 +36,7 @@
     <None Include="res\web\w2ui\master\dist\w2ui.min.css" />
     <None Include="res\web\w2ui\master\dist\w2ui.min.js" />
     <None Include="vcpkg.json" />
+    <None Include="wui\wui.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\screenshot.png" />
