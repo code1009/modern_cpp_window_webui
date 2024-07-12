@@ -86,8 +86,10 @@ int run(void)
 
 	//-----------------------------------------------------------------------
 	std::thread thread1(runApp);
-	std::thread thread2(runApp);
+	::Sleep(1000);
 
+	std::thread thread2(runApp);
+	::Sleep(1000);
 
 	runApp();
 
