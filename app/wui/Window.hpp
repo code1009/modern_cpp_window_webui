@@ -1,5 +1,15 @@
 ﻿#pragma once
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// File: Window.hpp
+//
+// Created by code1009.
+// Created on Jul-12th, 2024.
+//
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+
 
 
 
@@ -42,7 +52,7 @@ constexpr DWORD ChildWindowStyleEx    = 0;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-using WindowMessageHandler = std::function<void(WindowMessage& windowMessage)>;
+using WindowMessageHandler    = std::function<void(WindowMessage& windowMessage)>;
 using WindowMessageHandlerMap = std::map<std::uint32_t, WindowMessageHandler>;
 
 
@@ -144,23 +154,23 @@ public:
 	virtual void initializeWindowClass(void);
 	virtual void registerWindowClass(void);
 	virtual HWND createWindow(
-		HWND hWndParent = nullptr,
+		HWND     hWndParent  = nullptr,
 		LPCWSTR lpWindowName = L"Window",
-		DWORD dwStyle = FrameWindowStyle,
-		DWORD dwExStyle = FrameWindowStyleEx,
-		int X = CW_USEDEFAULT,
-		int Y = CW_USEDEFAULT,
-		int nWidth = CW_USEDEFAULT,
-		int nHeight = CW_USEDEFAULT,
-		HMENU hMenu = nullptr
+		DWORD   dwStyle      = FrameWindowStyle,
+		DWORD   dwExStyle    = FrameWindowStyleEx,
+		int     X            = CW_USEDEFAULT,
+		int     Y            = CW_USEDEFAULT,
+		int     nWidth       = CW_USEDEFAULT,
+		int     nHeight      = CW_USEDEFAULT,
+		HMENU   hMenu        = nullptr
 	);
 	virtual HWND createWindow(
-		HWND hWndParent,
+		HWND        hWndParent,
 		const RECT& rect,
-		LPCWSTR lpWindowName = L"Window",
-		DWORD dwStyle = FrameWindowStyle,
-		DWORD dwExStyle = FrameWindowStyleEx,
-		HMENU hMenu = nullptr
+		LPCWSTR     lpWindowName = L"Window",
+		DWORD       dwStyle      = FrameWindowStyle,
+		DWORD       dwExStyle    = FrameWindowStyleEx,
+		HMENU       hMenu        = nullptr
 	);
 	virtual void destroyWindow(void);
 };
