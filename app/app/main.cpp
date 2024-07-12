@@ -57,7 +57,7 @@ int runApp(void)
 	HRESULT hr;
 
 
-	//hr = ::CoInitialize(NULL);
+	//hr = ::CoInitialize(nullptr);
 	hr = ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 	if (FAILED(hr))
 	{
