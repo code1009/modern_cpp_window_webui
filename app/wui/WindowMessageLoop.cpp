@@ -76,15 +76,14 @@ void WindowMessageLoop::runLoop(void)
 
 
 	//------------------------------------------------------------------------
-	//HACCEL hAccel;
+#if 0
+	HACCEL hAccel;
 	
 	
-	//hAccel = getInstance()->loadAccelerators(_AccelId);
-
+	hAccel = getInstance()->loadAccelerators(_AccelId);
 
 
 	//------------------------------------------------------------------------
-#if 0
 	MSG msg;
 
 	
