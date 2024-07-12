@@ -9,7 +9,6 @@
 	
 </head>
 <body>
-
     페이지0
     <br />
     <br />
@@ -19,6 +18,8 @@
     <br />
 
     <script type="module">
+
+        'use strict';
 
         import { navigateContents, contentsPostMessage } from "/basic.js";
 
@@ -43,27 +44,27 @@
         var xmlhttp = new XMLHttpRequest();
 
 
-        xmlhttp.onreadystatechange = 
-            function()
-            {
-                if(this.readyState == 4 && this.status == 200)
-                {
-                    let myObj = JSON.parse(this.responseText);
+        xmlhttp.onreadystatechange =
+        function()
+        {
+        if(this.readyState == 4 && this.status == 200)
+        {
+        let myObj = JSON.parse(this.responseText);
 
-                    let html;
+        let html;
 
 
-                    html = myObj.fname;
-                    html += "&nbsp;";
-                    html += myObj.lname;
-                    html += "&nbsp;";
-                    html += myObj.sdate;
-                    html += "&nbsp;";
-                    html += myObj.random;
+        html = myObj.fname;
+        html += "&nbsp;";
+        html += myObj.lname;
+        html += "&nbsp;";
+        html += myObj.sdate;
+        html += "&nbsp;";
+        html += myObj.random;
 
-                    document.getElementById("demo").innerHTML = html;
-                }
-            };
+        document.getElementById("demo").innerHTML = html;
+        }
+        };
 
         xmlhttp.open("GET", "/page1/list0.json", true);
         xmlhttp.send();
