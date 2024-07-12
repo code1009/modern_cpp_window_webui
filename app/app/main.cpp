@@ -118,7 +118,7 @@ int APIENTRY wWinMain(
 	//-----------------------------------------------------------------------
 	MessageBoxA(nullptr, (LPCSTR)u8"가나다라", (LPCSTR)u8"제목", MB_OK);
 	/*
-	아래 적용하면 vld에서 오류가 발생함.
+	.manifest에 아래 적용하면 vld에서 오류가 발생함.
 
 	https://learn.microsoft.com/en-us/windows/apps/design/globalizing/use-utf8-code-page
 
