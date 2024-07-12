@@ -497,6 +497,11 @@ LRESULT __stdcall WindowProc(HWND hwnd, uint32_t message, WPARAM wParam, LPARAM 
 	return ::DefWindowProcW(hwnd, message, wParam, lParam);
 }
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 INT_PTR __stdcall DialogProc(HWND hwnd, uint32_t message, WPARAM wParam, LPARAM lParam)
 {

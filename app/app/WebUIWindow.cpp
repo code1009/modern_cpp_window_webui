@@ -106,6 +106,7 @@ WebUIWindow::WebUIWindow(WebUIManager* manager, std::wstring uri, HWND hParentWi
 
 WebUIWindow::~WebUIWindow()
 {
+#ifdef _DEBUG
 	//-------------------------------------------------------------------------
 	std::wostringstream oss;
 
@@ -115,6 +116,7 @@ WebUIWindow::~WebUIWindow()
 
 
 	WUI_TRACE(oss.str().c_str());
+#endif
 }
 
 void WebUIWindow::registerWindowMessageHandler(void)
