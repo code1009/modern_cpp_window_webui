@@ -4,6 +4,8 @@
 //
 // File: Window.hpp
 //
+// Part of the wui library.
+//
 // Created by code1009.
 // Created on Jul-12th, 2024.
 //

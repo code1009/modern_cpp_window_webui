@@ -2,6 +2,8 @@
 //
 // File: DebugTool.cpp
 //
+// Part of the wui library.
+//
 // Created by code1009.
 // Created on Jul-12th, 2024.
 //
