@@ -12,7 +12,7 @@
 #include "../vld/include/vld.h"
 
 // 추가 라이브러리 디렉토리:
-// $(ProjectDir)\vld\lib\Win64; % (AdditionalLibraryDirectories)
+// $(ProjectDir)\vld\lib\Win64;%(AdditionalLibraryDirectories)
 
 #endif // _DEBUG
 #endif
@@ -23,7 +23,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-// 	winver.h(Windows.h 포함)
+// winver.h(Windows.h 포함)
 // Api-ms-win-core-version-l1-1-0.dll
 #pragma comment (lib, "Version.lib")
 
