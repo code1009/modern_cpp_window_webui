@@ -110,9 +110,6 @@
     <ClInclude Include="res\Resource.h">
       <Filter>res</Filter>
     </ClInclude>
-    <ClInclude Include="wui\Core.hpp">
-      <Filter>wui</Filter>
-    </ClInclude>
     <ClInclude Include="wui\WindowFunction.hpp">
       <Filter>wui</Filter>
     </ClInclude>
@@ -149,11 +146,23 @@
     <ClInclude Include="app\WebUIManager.hpp">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="wui\DebugTool.hpp">
+      <Filter>wui</Filter>
+    </ClInclude>
+    <ClInclude Include="wui\Window.hpp">
+      <Filter>wui</Filter>
+    </ClInclude>
+    <ClInclude Include="wui\Instance.hpp">
+      <Filter>wui</Filter>
+    </ClInclude>
+    <ClInclude Include="wui\WindowMessageLoop.hpp">
+      <Filter>wui</Filter>
+    </ClInclude>
+    <ClInclude Include="wui\WindowMessage.hpp">
+      <Filter>wui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="wui\Core.cpp">
-      <Filter>wui</Filter>
-    </ClCompile>
     <ClCompile Include="wui\WindowFunction.cpp">
       <Filter>wui</Filter>
     </ClCompile>
@@ -180,6 +189,21 @@
     </ClCompile>
     <ClCompile Include="app\WebUIManager.cpp">
       <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="wui\DebugTool.cpp">
+      <Filter>wui</Filter>
+    </ClCompile>
+    <ClCompile Include="wui\Window.cpp">
+      <Filter>wui</Filter>
+    </ClCompile>
+    <ClCompile Include="wui\Instance.cpp">
+      <Filter>wui</Filter>
+    </ClCompile>
+    <ClCompile Include="wui\WindowMessageLoop.cpp">
+      <Filter>wui</Filter>
+    </ClCompile>
+    <ClCompile Include="wui\WindowMessage.cpp">
+      <Filter>wui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

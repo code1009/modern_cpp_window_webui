@@ -108,7 +108,7 @@ int APIENTRY wWinMain(
 
 
 	//-----------------------------------------------------------------------
-	wui::getWindowInstance()->setHandle(hInstance);
+	wui::getInstance()->setHandle(hInstance);
 	run();
 
 	return 0;

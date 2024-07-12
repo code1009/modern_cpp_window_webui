@@ -47,9 +47,13 @@
 #include <cpprest/json.h>
 
 //===========================================================================
-#include "wui/WindowFunction.hpp"
-#include "wui/Core.hpp"
+#include "wui/DebugTool.hpp"
+#include "wui/Instance.hpp"
+#include "wui/WindowMessage.hpp"
+#include "wui/Window.hpp"
+#include "wui/WindowMessageLoop.hpp"
 #include "wui/WindowMessageManipulator.hpp"
+#include "wui/WindowFunction.hpp"
 
 //===========================================================================
 #include "res/Resource.h"

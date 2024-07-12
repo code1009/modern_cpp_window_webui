@@ -12,11 +12,8 @@
 
 //===========================================================================
 #include "DebugTool.hpp"
-#include "WindowMessage.hpp"
-#include "Window.hpp"
-#include "WindowMessageLoop.hpp"
 
-#include "WindowMessageManipulator.hpp"
+#include "WindowMessageLoop.hpp"
 
 
 
@@ -33,18 +30,29 @@ namespace wui
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-WindowMessageManipulator::WindowMessageManipulator(WindowMessage* windowMessage) :
-	_windowMessage{ windowMessage }
+WindowMessageLoop::WindowMessageLoop()
 {
 }
 
-WindowMessageManipulator::~WindowMessageManipulator()
+WindowMessageLoop::~WindowMessageLoop()
 {
 }
 
-WindowMessage* WindowMessageManipulator::getWindowMessage(void)
+void WindowMessageLoop::runLoop(void)
 {
-	return _windowMessage;
+	MSG msg;
+	BOOL rv;
+
+
+	do
+	{
+		rv = ::PeekMessageW(&msg, HWND{}, 0, 0, PM_REMOVE);
+		if (rv != 0)
+		{
+			::TranslateMessage(&msg);
+			::DispatchMessageW(&msg);
+		}
+	} while (msg.message != WM_QUIT);
 }
 
 

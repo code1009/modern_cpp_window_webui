@@ -112,7 +112,7 @@ public:
 		std::wstring windowText;
 
 
-		windowText = wui::getWindowInstance()->loadString(IDS_APP_TITLE);
+		windowText = wui::getInstance()->loadString(IDS_APP_TITLE);
 
 
 		SetDlgItemText(getHandle(), IDC_ABOUT_APP_NAME, windowText.c_str());

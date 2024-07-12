@@ -63,19 +63,19 @@ bool WebUIContentsResourceStream::load(void)
 
 
 
-	HRSRC hResource = ::FindResourceW(wui::getWindowInstance()->getHandle(), _ResourceName.c_str(), pType);
+	HRSRC hResource = ::FindResourceW(wui::getInstance()->getHandle(), _ResourceName.c_str(), pType);
 	if (!hResource)
 	{
 		return false;
 	}
 
-	DWORD resourceSize = ::SizeofResource(wui::getWindowInstance()->getHandle(), hResource);
+	DWORD resourceSize = ::SizeofResource(wui::getInstance()->getHandle(), hResource);
 	if (!resourceSize)
 	{
 		return false;
 	}
 
-	const void* pResourceData = ::LockResource(::LoadResource(wui::getWindowInstance()->getHandle(), hResource));
+	const void* pResourceData = ::LockResource(::LoadResource(wui::getInstance()->getHandle(), hResource));
 	if (!pResourceData)
 	{
 		return false;

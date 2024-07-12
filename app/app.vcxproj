@@ -60,8 +60,12 @@
     <ClInclude Include="pch.hpp" />
     <ClInclude Include="res\Resource.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="wui\Core.hpp" />
+    <ClInclude Include="wui\DebugTool.hpp" />
+    <ClInclude Include="wui\Instance.hpp" />
+    <ClInclude Include="wui\Window.hpp" />
     <ClInclude Include="wui\WindowFunction.hpp" />
+    <ClInclude Include="wui\WindowMessage.hpp" />
+    <ClInclude Include="wui\WindowMessageLoop.hpp" />
     <ClInclude Include="wui\WindowMessageManipulator.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -74,12 +78,14 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="wui\Core.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="wui\DebugTool.cpp" />
+    <ClCompile Include="wui\Instance.cpp" />
+    <ClCompile Include="wui\Window.cpp" />
     <ClCompile Include="wui\WindowFunction.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="wui\WindowMessage.cpp" />
+    <ClCompile Include="wui\WindowMessageLoop.cpp" />
     <ClCompile Include="wui\WindowMessageManipulator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

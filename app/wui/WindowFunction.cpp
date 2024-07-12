@@ -11,8 +11,11 @@
 #include <strsafe.h>
 
 //===========================================================================
+#include "DebugTool.hpp"
+#include "WindowMessage.hpp"
+#include "Window.hpp"
+
 #include "WindowFunction.hpp"
-#include "Core.hpp"
 
 
 

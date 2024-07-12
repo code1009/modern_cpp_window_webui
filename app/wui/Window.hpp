@@ -6,23 +6,6 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#define WUI_WIDE_STRING_2(x) L##x
-#define WUI_WIDE_STRING_1(x) WUI_WIDE_STRING_2(x)
-
-//===========================================================================
-#define WUI_FILEW     WUI_WIDE_STRING_1(__FILE__)
-#define WUI_FUNCTIONW WUI_WIDE_STRING_1(__FUNCTION__)
-
-//===========================================================================
-#define WUI_TRACE(message) \
-	wui::trace((message),WUI_FILEW,__LINE__,WUI_FUNCTIONW)
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
 namespace wui
 {
 
@@ -32,91 +15,14 @@ namespace wui
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-void trace(const std::wstring& message,
-	const wchar_t* file,
-	const int line,
-	const wchar_t* func
-);
-void debugPrintln(const std::wstring& message);
-void errorReport(const std::wstring& message);
+constexpr DWORD ControlWindowStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+constexpr DWORD ControlWindowStyleEx = 0;
 
+constexpr DWORD FrameWindowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+constexpr DWORD FrameWindowStyleEx = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-class WindowInstance final
-{
-private:
-	HINSTANCE _Handle{ nullptr };
-
-public:
-	WindowInstance();
-
-public:
-	WindowInstance(const WindowInstance&) = delete;
-	WindowInstance& operator=(const WindowInstance&) = delete;
-
-	WindowInstance(WindowInstance&&) = delete;
-	WindowInstance& operator=(WindowInstance&&) = delete;
-
-public:
-	HINSTANCE getHandle(void) const;
-	HINSTANCE setHandle(HINSTANCE handle);
-
-public:
-	std::wstring loadString(int id);
-
-	HCURSOR loadCursor(int id);
-	HICON loadIcon(int id);
-	HBITMAP loadBitmap(int id);
-
-	HCURSOR loadCursor(LPCWSTR id);	
-	HICON loadIcon(LPCWSTR id);
-	HBITMAP loadBitmap(LPCWSTR id);
-
-	LPCWSTR makeIntResource(int id);
-};
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-WindowInstance* getWindowInstance(void);
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-class WindowMessage final
-{
-public:
-	HWND     hWnd;
-	uint32_t uMsg;
-	WPARAM   wParam;
-	LPARAM   lParam;
-	LRESULT  lResult;
-
-public:
-	explicit WindowMessage(
-		HWND          hwnd,
-		std::uint32_t umsg,
-		WPARAM        wparam,
-		LPARAM        lparam
-	);
-
-public:
-	WindowMessage(const WindowMessage& other);
-	WindowMessage& operator=(const WindowMessage& other);
-
-	WindowMessage(WindowMessage&& other) noexcept;
-	WindowMessage& operator=(WindowMessage&& other) noexcept;
-};
+constexpr DWORD MDIChildWindowStyle = WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+constexpr DWORD MDIChildWindowStyleEx = WS_EX_MDICHILD;
 
 
 
@@ -199,22 +105,6 @@ public:
 public:
 	virtual void callWindowProc(WindowMessage& windowMessage, WNDPROC windowProc = nullptr);
 };
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-constexpr DWORD ControlWindowStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-constexpr DWORD ControlWindowStyleEx = 0;
-
-constexpr DWORD FrameWindowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-constexpr DWORD FrameWindowStyleEx = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-
-constexpr DWORD MDIChildWindowStyle = WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-constexpr DWORD MDIChildWindowStyleEx = WS_EX_MDICHILD;
-
 
 
 
@@ -323,29 +213,6 @@ public:
 public:
 	virtual HWND createDialog(HWND hwndParent);
 	virtual void destroyWindow(void);
-};
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-class WindowMessageLoop
-{
-public:
-	WindowMessageLoop();
-	virtual ~WindowMessageLoop();
-
-public:
-	WindowMessageLoop(const WindowMessageLoop&) = delete;
-	WindowMessageLoop& operator=(const WindowMessageLoop&) = delete;
-
-	WindowMessageLoop(WindowMessageLoop&&) = delete;
-	WindowMessageLoop& operator=(WindowMessageLoop&&) = delete;
-
-public:
-	virtual void runLoop(void);
 };
 
 

@@ -33,7 +33,7 @@ MainFrame::MainFrame()
 	HWND hwnd;
 
 
-	windowText = wui::getWindowInstance()->loadString(IDS_APP_TITLE);
+	windowText = wui::getInstance()->loadString(IDS_APP_TITLE);
 	hwnd = createWindow(nullptr, windowText.c_str());
 	if (!hwnd)
 	{
@@ -71,14 +71,14 @@ void MainFrame::initializeWindowClass(void)
 	BasicWindow::initializeWindowClass();
 
 
-	static std::wstring windowClassName = wui::getWindowInstance()->loadString(IDC_APP);
+	static std::wstring windowClassName = wui::getInstance()->loadString(IDC_APP);
 
 
 	getWindowClass().lpszClassName = windowClassName.c_str();
-	getWindowClass().lpszMenuName  = wui::getWindowInstance()->makeIntResource(IDC_APP);
+	getWindowClass().lpszMenuName  = wui::getInstance()->makeIntResource(IDC_APP);
 //	getWindowClass().lpszMenuName  = nullptr;
-	getWindowClass().hIcon         = wui::getWindowInstance()->loadIcon(IDC_APP);
-	getWindowClass().hIconSm       = wui::getWindowInstance()->loadIcon(IDI_SMALL);
+	getWindowClass().hIcon         = wui::getInstance()->loadIcon(IDC_APP);
+	getWindowClass().hIconSm       = wui::getInstance()->loadIcon(IDI_SMALL);
 }
 
 void MainFrame::onCreate(wui::WindowMessage& windowMessage)
