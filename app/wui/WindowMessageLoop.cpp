@@ -28,6 +28,7 @@
 
 //===========================================================================
 #include "DebugTool.hpp"
+#include "Instance.hpp"
 
 #include "WindowMessageLoop.hpp"
 
@@ -56,6 +57,8 @@ WindowMessageLoop::~WindowMessageLoop()
 
 void WindowMessageLoop::runLoop(void)
 {
+#if 0
+	//------------------------------------------------------------------------
 	MSG msg;
 	BOOL rv;
 
@@ -69,6 +72,42 @@ void WindowMessageLoop::runLoop(void)
 			::DispatchMessageW(&msg);
 		}
 	} while (msg.message != WM_QUIT);
+#endif
+
+
+	//------------------------------------------------------------------------
+	//HACCEL hAccel;
+	
+	
+	//hAccel = getInstance()->loadAccelerators(_AccelId);
+
+
+
+	//------------------------------------------------------------------------
+#if 0
+	MSG msg;
+
+	
+	while (::GetMessage(&msg, nullptr, 0, 0))
+	{
+		if (!::TranslateAccelerator(msg.hwnd, hAccel, &msg))
+		{
+			::TranslateMessage(&msg);
+			::DispatchMessageW(&msg);
+		}
+	}
+#endif
+
+
+	//------------------------------------------------------------------------
+	MSG msg;
+
+
+	while (::GetMessage(&msg, nullptr, 0, 0))
+	{
+		::TranslateMessage(&msg);
+		::DispatchMessageW(&msg);
+	}
 }
 
 

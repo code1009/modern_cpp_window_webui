@@ -112,6 +112,11 @@ HBITMAP Instance::loadBitmap(int id)
 	return loadBitmap(makeIntResource(id));
 }
 
+HACCEL Instance::loadAccelerators(int id)
+{
+	return loadAccelerators(makeIntResource(id));
+}
+
 HCURSOR Instance::loadCursor(LPCWSTR id)
 {
 	return ::LoadCursorW(getHandle(), id);
@@ -125,6 +130,11 @@ HICON Instance::loadIcon(LPCWSTR id)
 HBITMAP Instance::loadBitmap(LPCWSTR id)
 {
 	return ::LoadBitmapW(getHandle(), id);
+}
+
+HACCEL Instance::loadAccelerators(LPCWSTR id)
+{
+	return ::LoadAcceleratorsW(getHandle(), id);
 }
 
 LPCWSTR Instance::makeIntResource(int id)

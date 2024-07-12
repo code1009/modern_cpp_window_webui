@@ -52,10 +52,12 @@ public:
 	HCURSOR loadCursor(int id);
 	HICON loadIcon(int id);
 	HBITMAP loadBitmap(int id);
+	HACCEL loadAccelerators(int id);
 
 	HCURSOR loadCursor(LPCWSTR id);	
 	HICON loadIcon(LPCWSTR id);
 	HBITMAP loadBitmap(LPCWSTR id);
+	HACCEL loadAccelerators(LPCWSTR id);
 
 	LPCWSTR makeIntResource(int id);
 };
