@@ -53,14 +53,17 @@ void runAppWindow(void)
 int runApp(void)
 {
 	//-----------------------------------------------------------------------
+#if 1
 	HRESULT hr;
 
 
-	hr = ::CoInitialize(NULL);
+	//hr = ::CoInitialize(NULL);
+	hr = ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 	if (FAILED(hr))
 	{
 		return -1;
 	}
+#endif
 	
 
 	//-----------------------------------------------------------------------
@@ -68,7 +71,9 @@ int runApp(void)
 
 	
 	//-----------------------------------------------------------------------
+#if 1
 	::CoUninitialize();
+#endif
 
 	return 0;
 }
@@ -86,17 +91,36 @@ int run(void)
 
 
 	//-----------------------------------------------------------------------
+	HRESULT hr;
+
+
+	hr = ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+	if (FAILED(hr))
+	{
+		return -1;
+	}
+
+
+	//-----------------------------------------------------------------------
 	std::thread thread1(runApp);
 	::Sleep(1000);
 
 	std::thread thread2(runApp);
-	::Sleep(1000);
-
-	runApp();
 
 
+	//-----------------------------------------------------------------------
+	//runApp();
+
+
+	//-----------------------------------------------------------------------
 	thread1.join();
 	thread2.join();
+
+
+	//-----------------------------------------------------------------------
+#if 0
+	::CoUninitialize();
+#endif
 
 
 	return 0;
