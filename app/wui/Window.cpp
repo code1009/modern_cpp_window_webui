@@ -260,18 +260,18 @@ void BasicWindow::initializeWindowClass(void)
 {
 	memset(&_WindowClass, 0, sizeof(_WindowClass));
 
-	_WindowClass.cbSize = sizeof(_WindowClass);
-	_WindowClass.style = CS_HREDRAW | CS_VREDRAW;
-	_WindowClass.cbClsExtra = 0;
-	_WindowClass.cbWndExtra = 0;
-	_WindowClass.hInstance = getInstance()->getHandle();
-	_WindowClass.lpfnWndProc = WindowProc;
-	_WindowClass.lpszClassName = L"WindowUI.BasicWindowClass";
-	_WindowClass.lpszMenuName = nullptr;
+	_WindowClass.cbSize        = sizeof(_WindowClass);
+	_WindowClass.style         = CS_HREDRAW | CS_VREDRAW;
+	_WindowClass.cbClsExtra    = 0;
+	_WindowClass.cbWndExtra    = 0;
+	_WindowClass.hInstance     = getInstance()->getHandle();
+	_WindowClass.lpfnWndProc   = WindowProc;
+	_WindowClass.lpszClassName = L"wui.BasicWindowClass";
+	_WindowClass.lpszMenuName  = nullptr;
 	_WindowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-	_WindowClass.hCursor = getInstance()->loadCursor(IDC_ARROW);
-	_WindowClass.hIcon = nullptr;
-	_WindowClass.hIconSm = nullptr;
+	_WindowClass.hCursor       = getInstance()->loadCursor(IDC_ARROW);
+	_WindowClass.hIcon         = nullptr;
+	_WindowClass.hIconSm       = nullptr;
 }
 
 void BasicWindow::registerWindowClass(void)
@@ -292,32 +292,32 @@ void BasicWindow::registerWindowClass(void)
 }
 
 HWND BasicWindow::createWindow(
-	HWND hWndParent,
+	HWND    hWndParent  ,
 	LPCWSTR lpWindowName,
-	DWORD dwStyle,
-	DWORD dwExStyle,
-	int X,
-	int Y,
-	int nWidth,
-	int nHeight,
-	HMENU hMenu
+	DWORD   dwStyle     ,
+	DWORD   dwExStyle   ,
+	int     X           ,
+	int     Y           ,
+	int     nWidth      ,
+	int     nHeight     ,
+	HMENU   hMenu
 )
 {
 	HWND handle;
 
 
 	handle = ::CreateWindowExW(
-		dwExStyle,
+		dwExStyle                 ,
 		_WindowClass.lpszClassName,
-		lpWindowName,
-		dwStyle,
-		X,
-		Y,
-		nWidth,
-		nHeight,
-		hWndParent,
-		hMenu,
-		_WindowClass.hInstance,
+		lpWindowName              ,
+		dwStyle                   ,
+		X                         ,
+		Y                         ,
+		nWidth                    ,
+		nHeight                   ,
+		hWndParent                ,
+		hMenu                     ,
+		_WindowClass.hInstance    ,
 		this
 	);
 
@@ -325,21 +325,21 @@ HWND BasicWindow::createWindow(
 }
 
 HWND BasicWindow::createWindow(
-	HWND hWndParent,
-	const RECT& rect,
-	LPCWSTR lpWindowName,
-	DWORD dwStyle,
-	DWORD dwExStyle,
-	HMENU hMenu
+	HWND        hWndParent  ,
+	const RECT& rect        ,
+	LPCWSTR     lpWindowName,
+	DWORD       dwStyle     ,
+	DWORD       dwExStyle   ,
+	HMENU       hMenu
 )
 {
 	return createWindow(
-		hWndParent, 
-		lpWindowName, 
-		dwStyle, 
-		dwExStyle, 
-		rect.left,
-		rect.top,
+		hWndParent            , 
+		lpWindowName          , 
+		dwStyle               , 
+		dwExStyle             , 
+		rect.left             ,
+		rect.top              ,
 		rect.right - rect.left,
 		rect.bottom - rect.top, 
 		hMenu
