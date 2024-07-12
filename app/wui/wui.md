@@ -25,10 +25,10 @@ wui(Windows UI) 라이브러리는 Windows 기반의 사용자 인터페이스 �
   
 #### Window 자식 클래스
 
-- `SubclassWindow` : common control이나 서브클래싱 윈도우가 필요한 경우 사용합니다.
-- `BasicWindow` : frame 윈도우나  view 윈도우에서 사용합니다.
-- `BasicModalDialog` : 모달 다이얼로그에서 사용합니다.
-- `BasicModelessDialog` 모델리스 다이얼로그에서 사용합니다.
+- `SubclassWindow`: common control이나 서브클래싱 윈도우가 필요한 경우 사용합니다.
+- `BasicWindow`: frame 윈도우나 view 윈도우에서 사용합니다.
+- `BasicModalDialog`: 모달 다이얼로그에서 사용합니다.
+- `BasicModelessDialog`: 모델리스 다이얼로그에서 사용합니다.
 
 위 클래스들을 이용해서 해당 용도에 맞게 상속받아서 윈도우 클래스를 구현해야 합니다.
 
