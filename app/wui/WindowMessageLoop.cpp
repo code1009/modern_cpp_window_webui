@@ -187,7 +187,7 @@ bool WindowMessageLoop::onIdle(int count)
 
 bool WindowMessageLoop::preTranslateMessage(MSG& msg)
 {
-	BOOL isProcessed = false;
+	bool isProcessed = false;
 
 
 	if ((msg.message >= WM_KEYFIRST && msg.message <= WM_KEYLAST) ||
